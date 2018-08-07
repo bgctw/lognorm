@@ -8,7 +8,6 @@ context("sumLognormal")
 
 test_that("estimateSumLognormal two Vars",{
   # generate nSample values of two lognormal random variables
-  nSample = 500
   mu1 = log(110)
   mu2 = log(100)
   sigma1 = 0.25
@@ -21,6 +20,7 @@ test_that("estimateSumLognormal two Vars",{
     exp(coefSum["sigma"]),  c(sigma = 1.16087), tolerance = 0.02 )
   #
   .tmp.f <- function(){
+    nSample = 500
     ds <- data.frame(
       x1 = rlnorm(nSample, mu1, sigma1)
       , x2 = rlnorm(nSample, mu2, sigma2)

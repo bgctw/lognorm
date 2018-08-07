@@ -26,3 +26,5 @@ vignettes/*.pdf
 /.svn
 .Rproj.user
 *.Rproj
+README.html
+tools

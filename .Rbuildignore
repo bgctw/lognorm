@@ -2,11 +2,13 @@
 ^\.Rproj\.user$      
 ^README\.Rmd$
 ^README\.md$
+^README\.html$
 ^README-.*\.png$
 ^NEWS\.Rmd$          
 vignettes/figure	
 vignettes/cache	
 ^scratch$
+^tools$
 ^tmp$
 ^.git$
 ^.gitignore$
