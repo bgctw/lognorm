@@ -1,21 +1,25 @@
 
 <!-- 
 README.md is generated from README.Rmd. Please edit that file
-knitr::knit("README.Rmd") 
+rmarkdown::render("README.Rmd") 
 -->
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/lognorm)](http://cran.r-project.org/package=lognorm) [![Travis-CI Build Status](https://travis-ci.org/bgctw/lognorm.svg?branch=master)](https://travis-ci.org/bgctw/lognorm)
 
 Overview
 --------
 
-`lognorm` package provides support for the univariate [logit-normal distribution](https://en.wikipedia.org/wiki/Logit-normal_distribution). In addition to the usual random, density, percential, and quantile function, it helps with estimating distribution parameters from observations statistics.
+The `lognorm` package provides support for the univariate [lognormal distribution](https://en.wikipedia.org/wiki/Log-normal_distribution). It helps
+
+-   estimating distribution parameters from observations statistics
+-   computing moments and other statistics
+-   approximate the sum of several lognormally distributed random variables
 
 Installation
 ------------
 
 ``` r
 # From CRAN
-install.packages("lognorm")
+# in future: install.packages("lognorm")
 
 # Or the the development version from GitHub:
 # install.packages("devtools")
@@ -24,8 +28,6 @@ devtools::install_github("bgctw/lognorm")
 
 Usage
 -----
-
-See the package vignettes for an introduction.
 
 A simple example computes the distribution parameters of the sum of two correlated lognormal parameters.
 
@@ -61,3 +63,5 @@ c(
 #>       mean  sigmaStar 
 #> 210.000000   1.437293
 ```
+
+See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) for further examples.

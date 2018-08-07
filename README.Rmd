@@ -22,17 +22,20 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-`lognorm` package provides support for the univariate
-[logit-normal
-distribution](https://en.wikipedia.org/wiki/Logit-normal_distribution). In
-addition to the usual random, density, percential, and quantile function, it
-helps with estimating distribution parameters from observations statistics.
+The `lognorm` package provides support for the univariate
+[lognormal
+distribution](https://en.wikipedia.org/wiki/Log-normal_distribution). 
+It helps 
+
+- estimating distribution parameters from observations statistics
+- computing moments and other statistics
+- approximate the sum of several lognormally distributed random variables
 
 ## Installation
 
 ```{r, eval = FALSE}
 # From CRAN
-install.packages("lognorm")
+# in future: install.packages("lognorm")
 
 # Or the the development version from GitHub:
 # install.packages("devtools")
@@ -40,8 +43,6 @@ devtools::install_github("bgctw/lognorm")
 ```
 
 ## Usage
-
-See the package vignettes for an introduction.
 
 A simple example computes the distribution parameters of the sum of 
 two correlated lognormal parameters.
@@ -76,3 +77,4 @@ c(
   , sigmaStar = unname(exp(coefSum["sigma"])))
 ```
 
+See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) for further examples.
