@@ -101,7 +101,9 @@ estimateSumLognormal <- function(
     corrLength <- length(effAcf)
   }
   corr <- corr[iFinite,iFinite]
-  S = exp(muFin)
+  #S = exp(muFin) 
+  # S dentoes the expected value, not mu in Lo13
+  S = exp(muFin + sigma*sigma/2) 
   Ssum = sum(S)
   sigma2Eff <- if (length(sigmaSum)) {
     # if sigma of the sum has been pre-specified
@@ -123,7 +125,7 @@ estimateSumLognormal <- function(
     })
     sum(ansi)/Ssum^2
   }
-  muSum = log(Ssum) + sigma2Eff/2
+  muSum = log(Ssum) - sigma2Eff/2
   ##value<< numeric vector with two components mu and sigma
   ## the parameters of the lognormal distribution at log scale
   return(c(mu = as.vector(muSum), sigma = as.vector(sqrt(sigma2Eff))))

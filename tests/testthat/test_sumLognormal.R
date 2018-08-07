@@ -1,5 +1,8 @@
 .tmp.f <- function(){
   require(testthat)
+  require(tidyr)
+  require(dplyr)
+  require(ggplot2)
 }
 context("sumLognormal")
 
@@ -179,6 +182,34 @@ test_that("estimateSumLognormalSampleGapfilled",{
     getLognormMoments( log(100), sigma[1]^2 )
   }
 })
+
+test_that("sumDecrease",{
+  # here use uncorrelated sample to not require mvtnorm
+  nObs <- 1000
+  xTrue <- rep(10, nObs)
+  sigmaStar <- rep(1.5, nObs) # multiplicative stddev of 1.2
+  theta <- getParmsLognormForExpval(xTrue, sigmaStar)
+  # generate observations with correlated errors
+  # # acf1 <- c(0.4,0.1)
+  # # corrM <- setMatrixOffDiagonals(
+  # #   diag(nrow = nObs), value = acf1, isSymmetric = TRUE)
+  # xObsN <- exp(mvtnorm::rmvnorm(
+  #   100, mean = theta[,1]
+  #   , sigma = diag(theta[,2]) %*% corrM %*% diag(theta[,2])))
+  nRep = 30
+  xObsN <- matrix(NA_real_, nrow = nRep, ncol = nObs)
+  for (i in 1:nRep) {
+    xObsN[i,] <- xObs <- exp(rnorm(nObs, theta[,1], theta[,2]))
+    #plot(density(xObs)); mean(xObs)
+  }
+  sums <- rowSums(xObsN)
+  summary(sums)
+  #plot(density(rowSums(xObsN))); abline(v = sum(xTrue))
+  coefSample <- estimateParmsLognormFromSample(sums)
+  coefSum <- estimateSumLognormal( theta[,1], theta[,2])
+  expect_equal(coefSum, coefSample, tolerance = 0.01)
+})
+
 
 
 

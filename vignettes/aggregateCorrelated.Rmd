@@ -40,7 +40,8 @@ We generate 10000 Observations with mean 10 and multiplicative standard deviatio
 of 1.5.
 
 ```{r}
-nObs <- 1000
+nObs <- 200; nRep <- 1000
+#nObs <- 1000; nRep <- 100
 xTrue <- rep(10, nObs)
 sigmaStar <- rep(1.5, nObs) # multiplicative stddev of 1.2
 theta <- getParmsLognormForExpval(xTrue, sigmaStar)
@@ -49,7 +50,7 @@ acf1 <- c(0.4,0.1)
 corrM <- setMatrixOffDiagonals(
   diag(nrow = nObs), value = acf1, isSymmetric = TRUE)
 xObsN <- exp(mvtnorm::rmvnorm(
-  100, mean = theta[,1]
+  nRep, mean = theta[,1]
   , sigma = diag(theta[,2]) %*% corrM %*% diag(theta[,2])))
 ds <- tibble(i = 1:nObs, xTrue, xObs = xObsN[1,], xErr =  xObs - xTrue)
 summary(rowSums(xObsN))
@@ -83,10 +84,10 @@ dsPredSum <- data.frame(
     q = qlnorm(p, coefSum["mu"], coefSum["sigma"] )
     ,density = dlnorm(q, coefSum["mu"], coefSum["sigma"]))
 
-ggplot(data.frame(y = rowSums(xObsN)), aes(y, color = "random draws")) + geom_density() +
+ggplot(data.frame(y = rowSums(xObsN)), aes(y, color = "random draws")) + 
+  geom_density() +
   geom_line(data = dsPredSum, aes(q, density, color = "computed")) +
   geom_vline(xintercept = sumExp) +
-  expand_limits(y = c(0, 0.0035)) +
 themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank()) +

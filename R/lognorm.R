@@ -86,7 +86,7 @@ estimateParmsLognormFromSample <- function(
   ## NA values should be stripped before the computation proceeds.
 ){
   logx <- log(x)
-  cbind(
+  c(
     mu = mean(logx, na.rm = na.rm)         ##<< center parameter
     ## (mean at log scale, log(median))
     ,sigma = sd(logx, na.rm = na.rm)  ##<< scale parameter
