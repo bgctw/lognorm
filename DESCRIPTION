@@ -1,0 +1,12 @@
+Package: lognorm
+Title: Functions for the Lognormal Distribution
+Version: 0.1.1
+Author: Thomas Wutzler
+Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
+Description: Moments of the lognormal distribution. Estimation of the parameters of the sum of lognormals.
+Depends: 
+Suggests: testthat, knitr,  dplyr, ggplot2, mvtnorm, purrr, tidyr
+VignetteBuilder: knitr
+License: GPL-2
+LazyData: true
+RoxygenNote: 6.0.1
