@@ -22,12 +22,7 @@ are estimated using all the samples. Otherwise, the scale parameter
 (uncertainty) is first estimated using only the non-gapfilled records.
 
 If there are only gap-filled records, assume uncertainty
-to be the largest uncertainty of given gap-filled records.
-
-Correlation matrix is constructed by inspecting the residuals of
-model predictions - observations at log-scale. By default, only the first auto
-correlation components are used that are positive
-(see \code{\link{computeEffectiveAutoCorr}}).}
+to be the largest uncertainty of given gap-filled records.}
 \value{numeric vector with components "mu", "sigma", and "nEff"
 the parameters of the lognormal distribution at log scale
 (Result of \code{link{estimateSumLognormal}})

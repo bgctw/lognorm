@@ -5,7 +5,8 @@
 \usage{getCorrMatFromAcf(nRow, effAcf)}
 \arguments{
   \item{nRow}{number of rows in correlation matrix}
-  \item{effAcf}{numeric vector of effective autocorrelation components}
+  \item{effAcf}{numeric vector of effective autocorrelation components
+. The first entry, which is defined as 1, is not used.}
 }
 
 

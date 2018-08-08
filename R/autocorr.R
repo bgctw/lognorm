@@ -79,7 +79,7 @@ getCorrMatFromAcf <- function(
   , effAcf  ##<< numeric vector of effective autocorrelation components
   ##. The first entry, which is defined as 1, is not used.
 ){
-  corr <- if (length(effAcf) > 0) {
+  corr <- if (length(effAcf) > 1) {
     setMatrixOffDiagonals(
       diag(nrow = nRow), value = effAcf[-1], isSymmetric = TRUE)
   } else {

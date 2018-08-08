@@ -1,5 +1,6 @@
 .tmp.f <- function(){
   require(testthat)
+  #
   require(tidyr)
   require(dplyr)
   require(ggplot2)
@@ -157,18 +158,21 @@ test_that("estimateSumLognormalSample",{
 test_that("estimateSumLognormalSampleGapfilled",{
   # here use uncorrelated sample to not require mvtnorm
   nSample <- 60
-  mu = log(100 + 10*sin((1:nSample)*pi/nSample))
-  sigma = rep(log(1.2), nSample)
+  mu = muTerms <- log(100 + 10*sin((1:nSample)*pi/nSample))
+  sigma = sigmaTerms <- rep(log(1.2), nSample)
+  momentsTerms <- getLognormMoments(mu, sigma)
   rM <- rlnorm(nSample, mu, sigma)
   resLog <- log(rM) - mu
   isGapFilled <- logical(nSample)
   isGapFilled[10:30] <- TRUE
   coefSum <- estimateSumLognormalSample(
     mu, sigma, resLog, isGapFilled = isGapFilled)
-  expect_equal( coefSum["mu"], c(mu = log(sum(exp(mu)))), tolerance = 0.02 )
-  # regression to previous result
-  expect_true( coefSum["sigma"] < sigma[1])
+  momentsSum <- getLognormMoments(coefSum["mu"], coefSum["sigma"])[1,]
+  # adding the means is conserved
+  expect_equal( unname(momentsSum["mean"]), sum(momentsTerms[,"mean"]) )
   # anticipated smaller than origina exp(sigma) of 1.2
+  expect_true( coefSum["sigma"] < sigma[1])
+  # regression to previous result
   expect_equal(
     exp(coefSum["sigma"]),  c(sigma = 1.029), tolerance = 0.02 )
   #expect_true( coefSum["nEff"] == nSample ) # subject to random
