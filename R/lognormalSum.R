@@ -40,21 +40,11 @@ estimateSumLognormalSample <- function(
       mu, sigma = 0, sigmaSum = sigmaSum, corrLength = length(effAcf) - 1)
     return(c(p , nEff = nEff))
   }
-  ##details<<
-  ## Correlation matrix is constructed by inspecting the residuals of
-  ## model predictions - observations at log-scale. By default, only the first auto
-  ## correlation components are used that are positive
-  ## (see \code{\link{computeEffectiveAutoCorr}}).
-  corrM <- diag(nrow = length(mu))
-  if (length(effAcf) > 1) {
-    corrM <- setMatrixOffDiagonals(
-      corrM, value = effAcf[-1], isSymmetric = TRUE)
-  }
   ##value<< numeric vector with components "mu", "sigma", and "nEff"
   ## the parameters of the lognormal distribution at log scale
   ## (Result of \code{link{estimateSumLognormal}})
   ## and the number of effective observations.
-  p <- estimateSumLognormal( mu, sigma, corr = corrM, corrLength = length(effAcf) - 1)
+  p <- estimateSumLognormal( mu, sigma, effAcf = effAcf)
   return(c(p , nEff = nEff))
 }
 
@@ -98,7 +88,7 @@ estimateSumLognormal <- function(
   if (nTerm == 1) return(structure(c(muFin,sigmaFin), names = c("mu","sigma")))
   if (!missing(effAcf) && length(effAcf)) {
     corr <- getCorrMatFromAcf(length(mu), effAcf)
-    corrLength <- length(effAcf)
+    corrLength <- length(effAcf) - 1L
   }
   corr <- corr[iFinite,iFinite]
   #S = exp(muFin) 

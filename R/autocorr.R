@@ -77,9 +77,14 @@ getCorrMatFromAcf <- function(
   ### Construct the full correlation matrix from autocorrelation components.
   nRow      ##<< number of rows in correlation matrix
   , effAcf  ##<< numeric vector of effective autocorrelation components
+  ##. The first entry, which is defined as 1, is not used.
 ){
-  setMatrixOffDiagonals(
-    diag(nrow = nRow), value = effAcf, isSymmetric = TRUE)
+  corr <- if (length(effAcf) > 0) {
+    setMatrixOffDiagonals(
+      diag(nrow = nRow), value = effAcf[-1], isSymmetric = TRUE)
+  } else {
+    diag(nrow = nRow)
+  }
 }
 
 #' @export

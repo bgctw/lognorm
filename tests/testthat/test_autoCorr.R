@@ -12,7 +12,7 @@ test_that("computeEffectiveNumObs",{
     acf(res, na.action = na.pass)
   }
   effAcf <- computeEffectiveAutoCorr(res)
-  expect_true( length(effAcf) %in% 5:12) # depends on random numbers
+  expect_true( length(effAcf) %in% 5:20) # depends on random numbers
   nEff <- computeEffectiveNumObs(res)
   expect_true(nEff < 1000 )
 })
