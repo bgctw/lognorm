@@ -5,7 +5,7 @@ Author: Thomas Wutzler
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: Provides Moments and other statistics of the lognormal distribution. 
   Estimation of the parameters of the sum of lognormals is implemented.
-Depends: 
+Imports: Matrix
 Suggests: testthat, knitr,  dplyr, ggplot2, mvtnorm, purrr, tidyr
 VignetteBuilder: knitr
 License: GPL-2

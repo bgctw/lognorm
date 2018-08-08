@@ -2,18 +2,19 @@
 \alias{estimateSumLognormal}
 \title{estimateSumLognormal}
 \description{Estimate the distribution parameters of the lognormal approximation to the sum}
-\usage{estimateSumLognormal(mu, sigma, corr = diag(nrow = length(mu)), 
-    sigmaSum = numeric(0), corrLength = nTerm, 
-    isStopOnNoTerm = FALSE, effAcf)}
+\usage{estimateSumLognormal(mu, sigma, corr = Diagonal(length(mu)), 
+    sigmaSum = numeric(0), corrLength = if (inherits(corr, 
+        "ddiMatrix")) 0 else nTerm, isStopOnNoTerm = FALSE, 
+    effAcf)}
 \arguments{
   \item{mu}{numeric vector of center parameters of terms at log scale}
   \item{sigma}{numeric vector of variance parameter of terms at log scale}
-  \item{corr}{numeric matrix of correlations between
-the random variables}
+  \item{corr}{numeric matrix
+of correlations between the random variables}
   \item{sigmaSum}{numeric scalar: possibility to specify
 of a precomputed scale parameter}
-  \item{corrLength}{integer scalar: set correlation length to
-smaller values
+  \item{corrLength}{integer
+scalar: set correlation length to smaller values
 to speed up computation by neglecting correlations among terms
 further apart.
 Set to zero to omit correlations.}

@@ -61,12 +61,12 @@ estimateSumLognormal <- function(
   ### Estimate the distribution parameters of the lognormal approximation to the sum
   mu       ##<< numeric vector of center parameters of terms at log scale
   , sigma  ##<< numeric vector of variance parameter of terms at log scale
-  , corr = diag(nrow = length(mu)) ##<< numeric matrix of correlations between
-  ## the random variables
+  , corr = Diagonal(length(mu)) ##<< numeric matrix 
+  ## of correlations between the random variables
   , sigmaSum = numeric(0) ##<< numeric scalar: possibility to specify
   ## of a precomputed scale parameter
-  , corrLength = nTerm   ##<< integer scalar: set correlation length to
-  ## smaller values
+  , corrLength = if(inherits(corr, "ddiMatrix")) 0 else nTerm  ##<< integer 
+  ## scalar: set correlation length to smaller values
   ## to speed up computation by neglecting correlations among terms
   ## further apart.
   ## Set to zero to omit correlations.
@@ -81,7 +81,8 @@ estimateSumLognormal <- function(
   ## random variables.
   ## Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
   ## 10.12988/ams.2013.39511
-  if (length(sigma) == 1) sigma <- rep(sigma, length(mu))
+  lengthMu <- length(mu)
+  if (length(sigma) == 1) sigma <- rep(sigma, lengthMu)
   iFinite <- which( is.finite(mu) & is.finite(sigma))
   muFin <- mu[iFinite]
   sigmaFin <- sigma[iFinite]
@@ -97,7 +98,7 @@ estimateSumLognormal <- function(
   if (!missing(effAcf) && (length(effAcf) > 1)) {
     corr <- getCorrMatFromAcf(length(mu), effAcf)
     corrLength <- length(effAcf) - 1L
-  }
+  } 
   corrFin <- corr[iFinite,iFinite]
   #S = exp(muFin) 
   # S dentoes the expected value, not mu in Lo13
