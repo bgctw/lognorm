@@ -54,17 +54,6 @@ test_that("estimateSumLognormal two Vars",{
   }
 })
 
-test_that("setMatrixOffDiagonals",{
-  size <- 6
-  mat <- diag(nrow = size)
-  value = c(0.5,0.25,0.1)
-  mat2 <- setMatrixOffDiagonals(
-    mat, 1:3, value = value, isSymmetric =  TRUE)
-  expect_true( all(c(mat2[1,2], mat2[2,1], mat2[3,2]) - value[1] == 0) )
-  expect_true( all(c(mat2[1,3], mat2[3,1], mat2[4,2]) - value[2] == 0) )
-  expect_true( all(c(mat2[1,5], mat2[5,1]) == 0) )
-})
-
 test_that("estimateSumLognormal correlated, few Vars",{
   if (!requireNamespace("mvtnorm")) skip("mvtnorm not installed.")
   # generate 500 samples of a sum of five correlated lognormal
@@ -130,12 +119,16 @@ test_that("estimateSumLognormalSample",{
   nSample <- 60
   mu = log(100 + 10*sin((1:nSample)*pi/nSample))
   sigma = rep(log(1.2), nSample)
-  acf1 <- c(0.9, 0.05)
-  corrM <- setMatrixOffDiagonals(
-    diag(nrow = length(mu)), value = acf1, isSymmetric = TRUE)
+  acf1 <- c(1, 0.9, 0.05)
+  # corrM <- setMatrixOffDiagonals(
+  #   diag(nrow = length(mu)), value = acf1, isSymmetric = TRUE)
+  corrM <- getCorrMatFromAcf(nSample, acf1)
+  diagSigma <- Diagonal(x = sigma)
   rM <- suppressWarnings(as.vector(exp(mvtnorm::rmvnorm(
-    1, mean = mu, sigma = diag(sigma) %*% corrM %*% diag(sigma)))))
+    1, mean = mu
+    , sigma = as.matrix(diagSigma %*% corrM %*% diagSigma)))))
   resLog <- log(rM) - mu
+  #effAcf <- computeEffectiveAutoCorr(resLog)
   coefSum <- estimateSumLognormalSample(mu, sigma, resLog)
   # test that medians add up 
   expect_equal( coefSum["mu"], c(mu = log(sum(exp(mu)))), tolerance = 0.02 )

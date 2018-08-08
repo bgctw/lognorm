@@ -34,7 +34,7 @@ computeEffectiveAutoCorr <- function(
   ## Observations Estimated with the Use of the Autocorrelation Function Estimated
   ## From the Data
   n <- length(res)
-  if (!is.finite(nC)) return(integer(0))
+  if (!is.finite(nC)) return(c(1))
   ##value<< numeric vector: stongest compponents of the autocorrelation function
   ans$acf[1:nC]
 }
@@ -79,12 +79,14 @@ getCorrMatFromAcf <- function(
   , effAcf  ##<< numeric vector of effective autocorrelation components
   ##. The first entry, which is defined as 1, is not used.
 ){
-  corr <- if (length(effAcf) > 1) {
-    setMatrixOffDiagonals(
-      diag(nrow = nRow), value = effAcf[-1], isSymmetric = TRUE)
-  } else {
-    diag(nrow = nRow)
-  }
+  nDiag <- length(effAcf) - 1
+  if (nDiag < 1) return(Diagonal(nRow))
+  bandSparse(
+    nRow, nRow, k = 0:nDiag, symmetric = TRUE
+    , diagonals = lapply(0:nDiag, function(i){
+      rep(effAcf[i + 1L], nRow - i)
+    })
+  )
 }
 
 #' @export
