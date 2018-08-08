@@ -15,6 +15,7 @@ estimateSumLognormalSample <- function(
   if (length(mu) == 1 ) return(
     c(mu = as.vector(mu), sigma = as.vector(sigma), nEff = 1)
   )
+  if (length(sigma) == 1) sigma <- rep(sigma, length(mu))
   nEff <- computeEffectiveNumObs(resLog, effAcf = effAcf)
   ##details<<
   ## If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
@@ -29,15 +30,21 @@ estimateSumLognormalSample <- function(
       max(sigma)
     } else {
       # recursive call with only the measured records
+      # set non-measured to NA but keep structure for autocorrelation distances
+      nTerm <- length(mu)
+      muMeas <- sigmaMeas <- resLogMeas <- rep(NA_real_, nTerm)
+      muMeas[isMeasured] <- mu[isMeasured]
+      sigmaMeas[isMeasured] <- sigma[isMeasured]
+      resLogMeas[isMeasured] <- resLog[isMeasured]
       ans1 <- estimateSumLognormalSample(
-        mu[isMeasured], sigma[isMeasured], resLog[isMeasured]
+        muMeas, sigmaMeas, resLogMeas
         ,effAcf = effAcf, isGapFilled = logical(0)
       )
       ans1["sigma"]
     }
     p <- estimateSumLognormal(
       # sigma will not be used only checked for is.finite()
-      mu, sigma = 0, sigmaSum = sigmaSum, corrLength = length(effAcf) - 1)
+      mu, sigma = sigma, sigmaSum = sigmaSum, effAcf = effAcf)
     return(c(p , nEff = nEff))
   }
   ##value<< numeric vector with components "mu", "sigma", and "nEff"
@@ -74,6 +81,7 @@ estimateSumLognormal <- function(
   ## random variables.
   ## Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
   ## 10.12988/ams.2013.39511
+  if (length(sigma) == 1) sigma <- rep(sigma, length(mu))
   iFinite <- which( is.finite(mu) & is.finite(sigma))
   muFin <- mu[iFinite]
   sigmaFin <- sigma[iFinite]
@@ -86,14 +94,14 @@ estimateSumLognormal <- function(
     return(c(mu = NA_real_, sigma = NA_real_))
   }
   if (nTerm == 1) return(structure(c(muFin,sigmaFin), names = c("mu","sigma")))
-  if (!missing(effAcf) && length(effAcf)) {
+  if (!missing(effAcf) && (length(effAcf) > 1)) {
     corr <- getCorrMatFromAcf(length(mu), effAcf)
     corrLength <- length(effAcf) - 1L
   }
-  corr <- corr[iFinite,iFinite]
+  corrFin <- corr[iFinite,iFinite]
   #S = exp(muFin) 
   # S dentoes the expected value, not mu in Lo13
-  S = exp(muFin + sigma*sigma/2) 
+  S = exp(muFin + sigmaFin*sigmaFin/2) 
   Ssum = sum(S)
   sigma2Eff <- if (length(sigmaSum)) {
     # if sigma of the sum has been pre-specified
@@ -105,10 +113,10 @@ estimateSumLognormal <- function(
     jEnds <- pmin(nTerm, (1:nTerm) + corrLength)
     ansi = sapply(1:nTerm, function(i){
       j <- jStarts[i]:jEnds[i]
-      ansj <- corr[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]*S[j]  #Ssum outside loop
+      ansj <- corrFin[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]*S[j]  #Ssum outside loop
       # ansj2 <- sapply(jStarts[i]:jEnds[i], function(j){
-      #   #corr[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]/Ssum*S[j]/Ssum
-      #   corr[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]*S[j]  #Ssum outside loop
+      #   #corrFin[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]/Ssum*S[j]/Ssum
+      #   corrFin[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]*S[j]  #Ssum outside loop
       # })
       # sum(ansj2)
       sum(ansj)
