@@ -2,10 +2,12 @@
 \alias{getParmsLognormForMoments}
 \title{getParmsLognormForMoments}
 \description{get the mean and variance of a log-normal distribution}
-\usage{getParmsLognormForMoments(mean, var)}
+\usage{getParmsLognormForMoments(mean, var, sigmaOrig = sqrt(var))}
 \arguments{
   \item{mean}{expected value at original scale}
   \item{var}{variance at original scale}
+  \item{sigmaOrig}{alternatively to the variance,
+the standard devation at original scale can be given}
 }
 
 \value{numeric matrix with columns

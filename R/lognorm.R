@@ -44,13 +44,14 @@ getParmsLognormForMoments <- function(
   ### get the mean and variance of a log-normal distribution
   mean        ##<< expected value at original scale
   , var       ##<< variance at original scale
+  , sigmaOrig = sqrt(var)  ##<< alternatively to the variance,
+  ## the standard devation at original scale can be given
 ){
   ##references<< Limpert E, Stahel W & Abbt M (2001)
   ## Log-normal Distributions across the Sciences: Keys and Clues.
   ## Oxford University Press (OUP) 51, 341,
   ## 10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2
-  s = sqrt(var) # standard deviation at original scale
-  omega = 1 + (s/mean)^2
+  omega = 1 + (sigmaOrig/mean)^2
   mu = log(mean / sqrt(omega))
   sigma = sqrt(log(omega))
   ##value<< numeric matrix with columns
