@@ -42,14 +42,32 @@ test_that("computeEffectiveNumObs with NA",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
   res[10:1000] <- NA
-  .tmp.f <- function(){
-    plot(res)
-    acf(res, na.action = na.pass)
-  }
   effAcf <- computeEffectiveAutoCorr(res)
   nEff <- computeEffectiveNumObs(res)
   expect_true(is.na(nEff))
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_true(nEff <  10)
+})
+
+test_that("computeEffectiveNumObs with single finite obs",{
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
+  res[2:100] <- NA
+  effAcf <- computeEffectiveAutoCorr(res)
+  nEff <- computeEffectiveNumObs(res)
+  expect_true(is.na(nEff))
+  nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
+  expect_equal(nEff,1)
+})
+
+test_that("computeEffectiveNumObs with no finite obs",{
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
+  res[] <- NA
+  effAcf <- computeEffectiveAutoCorr(res)
+  nEff <- computeEffectiveNumObs(res)
+  expect_true(is.na(nEff))
+  nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
+  expect_equal(nEff,0)
 })
 

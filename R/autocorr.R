@@ -7,9 +7,10 @@ computeEffectiveNumObs <- function(
   , na.rm = FALSE  ##<< a logical value indicating whether NA values should be 
   ## stripped before the computation proceeds. 
 ){
-  if (na.rm) res <- res[!is.na(res)]
-  if (any(is.na(res))) return(NA_integer_)
-  n <- length(res)
+  # make sure not to overide res, because its used in default effAcf
+  resFin <- if (na.rm) res[!is.na(res)] else res
+  if (any(is.na(resFin))) return(NA_integer_)
+  n <- length(resFin)
   nC <- length(effAcf)
   if (!nC || (length(effAcf) == 1)) return(n)
   nEff <- n/(1 + 2*sum(1 - 1:nC/n*effAcf))
