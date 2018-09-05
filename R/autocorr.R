@@ -4,8 +4,13 @@ computeEffectiveNumObs <- function(
   ### compute the effective number of observations taking into account autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
   , effAcf = computeEffectiveAutoCorr(res) ##<< may provide precomputed for efficiency
+  , na.rm = FALSE  ##<< a logical value indicating whether NA values should be 
+  ## stripped before the computation proceeds. 
 ){
-  n <- length(res)
+  # make sure not to overide res, because its used in default effAcf
+  resFin <- if (na.rm) res[!is.na(res)] else res
+  if (any(is.na(resFin))) return(NA_integer_)
+  n <- length(resFin)
   nC <- length(effAcf)
   if (!nC || (length(effAcf) == 1)) return(n)
   nEff <- n/(1 + 2*sum(1 - 1:nC/n*effAcf))
