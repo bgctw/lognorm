@@ -24,6 +24,17 @@ test_that("setMatrixOffDiagonals",{
   expect_true( all(c(mat2[1,5], mat2[5,1]) == 0) )
 })
 
+test_that(".trimNA",{
+  x <- 1:5; x[2] <- NA
+  expect_equal( .trimNA(x), x)
+  y <- c(rep(NA,3),x )
+  expect_equal( .trimNA(y), x)
+  y <- c(x, rep(NA,3) )
+  expect_equal( .trimNA(y), x)
+  y <- c(rep(NA,3),x, rep(NA,3) )
+  expect_equal( .trimNA(y), x)
+})
+
 test_that("computeEffectiveNumObs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
@@ -40,20 +51,32 @@ test_that("computeEffectiveNumObs",{
 
 test_that("computeEffectiveNumObs with NA",{
   # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[10:1000] <- NA
+  res <- stats::filter(rnorm(1000), filter = rep(1,8), circular = TRUE)
+  effAcfFull <- computeEffectiveAutoCorr(res)
+  res[8:1000] <- NA
+  nEff <- computeEffectiveNumObs(res)
+  # if first correlation is negative, nEff will be equal
+  expect_true(nEff <=  sum(is.finite(res))) 
+  expect_true(nEff >=  1)
+  res[3] <- NA
   nEff <- computeEffectiveNumObs(res)
   expect_true(is.na(nEff))
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
-  expect_true(nEff <  10)
+  expect_true(nEff <=  sum(is.finite(res)))
+  nEff <- computeEffectiveNumObs(res, na.rm = TRUE, effAcf = effAcfFull)
+  expect_true(nEff <=  sum(is.finite(res)))
+  expect_true(nEff >=  1)
+  res[2:5] <- NA  # many NAs in center
+  nEff <- computeEffectiveNumObs(res, na.rm = TRUE, effAcf = effAcfFull)
+  expect_equal(nEff,1)
 })
 
 test_that("computeEffectiveNumObs with single finite obs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
   res[2:100] <- NA
-  nEff <- computeEffectiveNumObs(res)
-  expect_true(is.na(nEff))
+  nEff <- computeEffectiveNumObs(res) # NA at edges is ok
+  expect_equal(nEff,1)
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_equal(nEff,1)
 })
@@ -63,7 +86,7 @@ test_that("computeEffectiveNumObs with no finite obs",{
   res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
   res[] <- NA
   nEff <- computeEffectiveNumObs(res)
-  expect_true(is.na(nEff))
+  expect_equal(nEff,0)
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_equal(nEff,0)
 })

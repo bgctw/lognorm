@@ -4,18 +4,54 @@ computeEffectiveNumObs <- function(
   ### compute the effective number of observations taking into account autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
   , effAcf = computeEffectiveAutoCorr(res) ##<< may provide precomputed for efficiency
+  ## the first entry is fixed at 1 for zero distance
   , na.rm = FALSE  ##<< a logical value indicating whether NA values should be 
   ## stripped before the computation proceeds. 
 ){
-  # make sure not to overide res, because its used in default effAcf
-  resFin <- if (na.rm) res[!is.na(res)] else res
-  if (any(is.na(resFin))) return(NA_integer_)
-  n <- length(resFin)
-  nC <- length(effAcf)
-  if (!nC || (length(effAcf) == 1)) return(n)
-  nEff <- n/(1 + 2*sum(1 - 1:nC/n*effAcf))
+  ##references<< 
+  ## Zieba & Ramza (2011) 
+  ## Standard Deviation of the Mean of Autocorrelated 
+  ## Observations Estimated with the Use of the Autocorrelation Function 
+  ## Estimated From the Data. 
+  ## Metrology and Measurement Systems, 
+  ## Walter de Gruyter GmbH, 18 10.2478/v10178-011-0052-x
+  ## 
+  ## Bayley & Hammersley (1946) 
+  ## The "effective" number of independent observations in an autocorrelated 
+  ## time series. 
+  ## Supplement to the Journal of the Royal Statistical Society, JSTOR,8,184-197
+  #
+  ##details<< Handling of NA values: NAs at the beginning or end and are 
+  ## just trimmed before computation and pose no problem. 
+  ## However with NAs aside from edges, the return value isbiased low,
+  ## because correlatations terms are subtracted for those positions.
+  resTr <- .trimNA(res)
+  if (!isTRUE(na.rm) & any(is.na(resTr))) return(NA_integer_)
+  isFin <- is.finite(resTr)
+  n <- sum(isFin)
+  if (n == 0) return(0L)
+  effAcfD <- effAcf[-1] # without zero distance
+  # correlations may have been computed on a sample larger than given
+  # then only use the 1..(n-1) components
+  nC <- min(length(resTr) - 1, length(effAcfD))
+  if (nC == 0) return(n)
+  nEff0 <- n/(1 + 2*sum((1 - 1:nC/length(resTr))*effAcfD[1:nC]))
+  ##details<< Because of NA correlation terms, the computed effective number of
+  ## observations can be smaller than 1. In this case 1 is returned.
+  nEff <- max(1, nEff0)  
+  if ( nEff > n) stop("encountered nEff larger than finite records.")
   ##value<< integer scalar: effective number of observations
   nEff
+}
+
+.trimNA <- function(
+  ### remove NA values at the start and end
+  x  ##<< numeric vectpr
+){
+  nisna <- complete.cases(x)
+  idx <- cumsum(nisna > 0) & rev(cumsum(rev(nisna))) > 0
+  ##value<< subset of x with leading and trailing NAs removed
+  x[idx]
 }
 
 #' @export
