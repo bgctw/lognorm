@@ -6,8 +6,9 @@
     na.rm = FALSE)}
 \arguments{
   \item{res}{numeric of autocorrelated numbers, usually observation - model residuals}
-  \item{effAcf}{may provide precomputed for efficiency
-the first entry is fixed at 1 for zero distance}
+  \item{effAcf}{autocorrelation coefficients.
+The first entry is fixed at 1 for zero distance.
+May provide precomputed for efficiency or computed from a larger sample.}
   \item{na.rm}{a logical value indicating whether NA values should be
 stripped before the computation proceeds. }
 }

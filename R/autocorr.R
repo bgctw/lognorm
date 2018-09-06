@@ -3,8 +3,9 @@
 computeEffectiveNumObs <- function(
   ### compute the effective number of observations taking into account autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
-  , effAcf = computeEffectiveAutoCorr(res) ##<< may provide precomputed for efficiency
-  ## the first entry is fixed at 1 for zero distance
+  , effAcf = computeEffectiveAutoCorr(res) ##<< autocorrelation coefficients.
+  ## The first entry is fixed at 1 for zero distance.
+  ## May provide precomputed for efficiency or computed from a larger sample.
   , na.rm = FALSE  ##<< a logical value indicating whether NA values should be 
   ## stripped before the computation proceeds. 
 ){
