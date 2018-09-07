@@ -5,7 +5,7 @@
 \usage{estimateSumLognormal(mu, sigma, corr = Diagonal(length(mu)), 
     sigmaSum = numeric(0), corrLength = if (inherits(corr, 
         "ddiMatrix")) 0 else nTerm, isStopOnNoTerm = FALSE, 
-    effAcf)}
+    effAcf, na.rm = isStopOnNoTerm)}
 \arguments{
   \item{mu}{numeric vector of center parameters of terms at log scale}
   \item{sigma}{numeric vector of variance parameter of terms at log scale}
@@ -23,6 +23,9 @@ default, NA is returned for the sum.
 Set this to TRUE to issue an error instead.}
   \item{effAcf}{numeric vector of effective autocorrelation
 This overides arguments \code{corr} and \code{corrLength}}
+  \item{na.rm}{if there are terms with NA values in mu or sigma
+by default also the sum coefficients are NA. Set to TRUE to 
+neglect such terms in the sum.}
 }
 
 \value{numeric vector with two components mu and sigma
