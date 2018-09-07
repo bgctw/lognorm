@@ -1,6 +1,7 @@
 .tmp.f <- function(){
   require(testthat)
   #
+  require(Matrix)
   require(tidyr)
   require(dplyr)
   require(ggplot2)
@@ -103,6 +104,8 @@ test_that("estimateSumLognormal few terms",{
   sigma = log(rep(1.2, length(mu)))
   # no finite case
   sigma0 <- sigma; sigma0[] <- NA
+  coefSum <- estimateSumLognormal(mu, sigma0, na.rm = TRUE)
+  expect_equal(coefSum, c(mu = NA_real_, sigma = NA_real_))
   coefSum <- estimateSumLognormal(mu, sigma0)
   expect_equal(coefSum, c(mu = NA_real_, sigma = NA_real_))
   expect_error(
@@ -110,6 +113,8 @@ test_that("estimateSumLognormal few terms",{
   # one finite case
   sigma1 <- sigma; sigma1[-1] <- NA
   coefSum <- estimateSumLognormal(mu, sigma1)
+  expect_equal(coefSum, c(mu = NA_real_, sigma = NA_real_))
+  coefSum <- estimateSumLognormal(mu, sigma1, na.rm = TRUE)
   expect_equal(coefSum, c(mu = mu[1], sigma = sigma1[1]))
 })
 

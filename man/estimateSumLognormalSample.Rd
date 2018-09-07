@@ -4,7 +4,7 @@
 \description{Estimate the parameters of the lognormal approximation to the sum}
 \usage{estimateSumLognormalSample(mu, sigma, resLog, 
     effAcf = computeEffectiveAutoCorr(resLog), 
-    isGapFilled = logical(0))}
+    isGapFilled = logical(0), na.rm = TRUE)}
 \arguments{
   \item{mu}{numeric vector of center parameters of terms at log scale}
   \item{sigma}{numeric vector of variance parameter of terms at log scale}
@@ -15,6 +15,7 @@ coefficients (may provide precomputed for efficiency or if the sample
 of resLog is too small) set to 1 to assume uncorrelated sample}
   \item{isGapFilled}{logical vector whether entry is gap-filled
 rather than an original measurement, see details}
+  \item{na.rm}{neglect terms with NA vlaues in mu or sigma}
 }
 \details{If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
 \code{!length(isGapFilled)} (the default), distribution parameters

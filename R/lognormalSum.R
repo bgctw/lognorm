@@ -10,13 +10,14 @@ estimateSumLognormalSample <- function(
   ## of resLog is too small) set to 1 to assume uncorrelated sample
   , isGapFilled = logical(0) ##<< logical vector whether entry is gap-filled 
   ## rather than an original measurement, see details
+  , na.rm = TRUE  ##<< neglect terms with NA vlaues in mu or sigma
 ){
   # only one term, return the parameters
   if (length(mu) == 1 ) return(
     c(mu = as.vector(mu), sigma = as.vector(sigma), nEff = 1)
   )
   if (length(sigma) == 1) sigma <- rep(sigma, length(mu))
-  nEff <- computeEffectiveNumObs(resLog, effAcf = effAcf)
+  nEff <- computeEffectiveNumObs(resLog, effAcf = effAcf, na.rm = na.rm)
   ##details<<
   ## If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
   ## \code{!length(isGapFilled)} (the default), distribution parameters
@@ -39,19 +40,20 @@ estimateSumLognormalSample <- function(
       ans1 <- estimateSumLognormalSample(
         muMeas, sigmaMeas, resLogMeas
         ,effAcf = effAcf, isGapFilled = logical(0)
+        ,na.rm = na.rm
       )
       ans1["sigma"]
     }
     p <- estimateSumLognormal(
       # sigma will not be used only checked for is.finite()
-      mu, sigma = sigma, sigmaSum = sigmaSum, effAcf = effAcf)
+      mu, sigma = sigma, sigmaSum = sigmaSum, effAcf = effAcf, na.rm = na.rm)
     return(c(p , nEff = nEff))
   }
   ##value<< numeric vector with components "mu", "sigma", and "nEff"
   ## the parameters of the lognormal distribution at log scale
   ## (Result of \code{link{estimateSumLognormal}})
   ## and the number of effective observations.
-  p <- estimateSumLognormal( mu, sigma, effAcf = effAcf)
+  p <- estimateSumLognormal( mu, sigma, effAcf = effAcf, na.rm = na.rm)
   return(c(p , nEff = nEff))
 }
 
@@ -65,7 +67,7 @@ estimateSumLognormal <- function(
   ## of correlations between the random variables
   , sigmaSum = numeric(0) ##<< numeric scalar: possibility to specify
   ## of a precomputed scale parameter
-  , corrLength = if(inherits(corr, "ddiMatrix")) 0 else nTerm  ##<< integer 
+  , corrLength = if (inherits(corr, "ddiMatrix")) 0 else nTerm  ##<< integer 
   ## scalar: set correlation length to smaller values
   ## to speed up computation by neglecting correlations among terms
   ## further apart.
@@ -75,6 +77,9 @@ estimateSumLognormal <- function(
   ## Set this to TRUE to issue an error instead.
   , effAcf                 ##<< numeric vector of effective autocorrelation
   ## This overides arguments \code{corr} and \code{corrLength}
+  , na.rm = isStopOnNoTerm ##<< if there are terms with NA values in mu or sigma
+  ## by default also the sum coefficients are NA. Set to TRUE to 
+  ## neglect such terms in the sum.
 ){
   ##references<< 
   ## Lo C (2013) WKB approximation for the sum of two correlated lognormal 
@@ -84,6 +89,8 @@ estimateSumLognormal <- function(
   lengthMu <- length(mu)
   if (length(sigma) == 1) sigma <- rep(sigma, lengthMu)
   iFinite <- which( is.finite(mu) & is.finite(sigma))
+  if (!isTRUE(na.rm) && length(iFinite) != lengthMu) 
+    return(c(mu = NA_real_, sigma = NA_real_))
   muFin <- mu[iFinite]
   sigmaFin <- sigma[iFinite]
   nTerm = length(muFin)
