@@ -1,7 +1,17 @@
-<!--
-%\VignetteEngine{knitr}
-%\VignetteIndexEntry{Aggregating a series of correlated lognormal variables}
--->
+---
+title: Aggregating a series of correlated lognormal variables
+output: 
+  rmarkdown::html_vignette: 
+    keep_md: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Aggregating a series of correlated lognormal variables}
+  %\usepackage[UTF-8]{inputenc}
+---
+```{r eval=FALSE, include=FALSE}
+# twDev::genVigs()
+rmarkdown::render("aggregateCorrelated.Rmd","md_document") 
+```
 
 ```{r setup, include=FALSE}
 library(knitr)

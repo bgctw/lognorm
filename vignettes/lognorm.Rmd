@@ -1,7 +1,17 @@
-<!--
-%\VignetteEngine{knitr}
-%\VignetteIndexEntry{Using logitnorm package)}
--->
+---
+title: Using the logitnorm package
+output: 
+  rmarkdown::html_vignette: 
+    keep_md: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Using the logitnorm package}
+  %\usepackage[UTF-8]{inputenc}
+---
+```{r eval=FALSE, include=FALSE}
+# twDev::genVigs()
+rmarkdown::render("lognorm.Rmd","md_document") 
+```
 
 ```{r setup, include=FALSE}
 library(knitr)

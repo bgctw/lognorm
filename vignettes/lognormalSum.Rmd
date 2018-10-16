@@ -1,7 +1,17 @@
-<!--
-%\VignetteEngine{knitr}
-%\VignetteIndexEntry{Approximating the sum of lognormal random variables}
--->
+---
+title: Approximating the sum of lognormal random variables
+output: 
+  rmarkdown::html_vignette: 
+    keep_md: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Approximating the sum of lognormal random variables}
+  %\usepackage[UTF-8]{inputenc}
+---
+```{r eval=FALSE, include=FALSE}
+# twDev::genVigs()
+rmarkdown::render("lognormalSum.Rmd","md_document") 
+```
 
 ```{r setup, include=FALSE}
 library(knitr)
