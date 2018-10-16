@@ -19,7 +19,7 @@ Installation
 
 ``` r
 # From CRAN
-# in future: install.packages("lognorm")
+install.packages("lognorm")
 
 # Or the the development version from GitHub:
 # install.packages("devtools")
@@ -32,13 +32,18 @@ Usage
 A simple example computes the distribution parameters of the sum of two correlated lognormal parameters.
 
 ``` r
+require(lognorm)
+#> Loading required package: lognorm
 means <- c(110,100)
 sigmaStar <- c(1.5,1.5)
 corr <- setMatrixOffDiagonals(diag(nrow = 2), value = 0.6, isSymmetric = TRUE)
+#
+# estimate paramters of terms 
 coefTerms <- getParmsLognormForExpval(means, sigmaStar)
-#estimateSumLognormalBenchmark( c(mu1,mu2), c(sigma1,sigma2) )
+# approximate sum of the two correlated term
 coefSum <- estimateSumLognormal( coefTerms[,"mu"], coefTerms[,"sigma"], corr = corr )
-# 
+#
+# plot statistics of distribution 
 x <- seq(50,500,length.out = 100)
 density <- dlnorm(x, coefSum["mu"], coefSum["sigma"])
 plot(density ~ x, type = "l")

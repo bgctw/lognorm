@@ -35,7 +35,7 @@ It helps
 
 ```{r, eval = FALSE}
 # From CRAN
-# in future: install.packages("lognorm")
+install.packages("lognorm")
 
 # Or the the development version from GitHub:
 # install.packages("devtools")
@@ -48,6 +48,7 @@ A simple example computes the distribution parameters of the sum of
 two correlated lognormal parameters.
  
 ```{r example}
+require(lognorm)
 means <- c(110,100)
 sigmaStar <- c(1.5,1.5)
 corr <- setMatrixOffDiagonals(diag(nrow = 2), value = 0.6, isSymmetric = TRUE)
@@ -72,7 +73,7 @@ abline(v = getLognormMedian(coefSum["mu"], coefSum["sigma"]), lty = "dotdash")
 ```
 
 The sum of the expected values is conserved, while the mutliplicative standard 
-deviation decreases during aggregtion:
+deviation decreases during aggregation:
 
 ```{r}
 c( 
