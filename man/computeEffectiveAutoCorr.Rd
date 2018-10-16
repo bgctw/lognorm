@@ -7,13 +7,18 @@
   \item{res}{numeric of autocorrelated numbers, usually observation - model residuals}
 }
 \details{Returns all components before first negative autocorrelation}
-\value{numeric vector: stongest compponents of the autocorrelation function}
-\references{Zieba 2011 Standard Deviation of the Mean of Autocorrelated
+\value{numeric vector: strongest components of the autocorrelation function}
+\references{\code{Zieba 2011 Standard Deviation of the Mean of Autocorrelated
 Observations Estimated with the Use of the Autocorrelation Function Estimated
-From the Data}
+From the Data}}
 \author{Thomas Wutzler}
 
 
 
 
-
+\examples{
+# generate autocorrelated time series
+res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+res[100:120] <- NA
+(effAcf <- computeEffectiveAutoCorr(res))
+}

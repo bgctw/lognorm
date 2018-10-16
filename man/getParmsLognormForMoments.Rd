@@ -6,8 +6,8 @@
 \arguments{
   \item{mean}{expected value at original scale}
   \item{var}{variance at original scale}
-  \item{sigmaOrig}{alternatively to the variance,
-the standard devation at original scale can be given}
+  \item{sigmaOrig}{standard deviation at original scale
+, can be specified alternatively to the variance}
 }
 
 \value{numeric matrix with columns
@@ -16,13 +16,17 @@ the standard devation at original scale can be given}
 \item{sigma}{scale parameter
 (standard deviation at log scale)
 }}
-\references{Limpert E, Stahel W & Abbt M (2001)
+\references{\code{Limpert E, Stahel W & Abbt M (2001)
 Log-normal Distributions across the Sciences: Keys and Clues.
 Oxford University Press (OUP) 51, 341,
-10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}
+10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}}
 \author{Thomas Wutzler}
 
 
 
 
-
+\examples{
+.mean <- 1
+.var <- c(1.3,2)^2
+getParmsLognormForMoments(.mean, .var)
+}

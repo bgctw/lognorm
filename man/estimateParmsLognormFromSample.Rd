@@ -16,4 +16,9 @@ NA values should be stripped before the computation proceeds.}
 
 
 
-
+\examples{
+.mu <- log(1)
+.sigma <- log(2)
+x <- exp(rnorm(50, mean = .mu, sd = .sigma))
+estimateParmsLognormFromSample(x)
+}

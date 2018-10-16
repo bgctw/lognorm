@@ -15,4 +15,6 @@
 
 
 
-
+\examples{
+getLognormMedian(mu = log(1), sigma = log(2))
+}

@@ -7,10 +7,10 @@ estimateSumLognormalSample <- function(
   ## to estimate correlation
   , effAcf = computeEffectiveAutoCorr(resLog) ##<< effective autocorrelation
   ## coefficients (may provide precomputed for efficiency or if the sample
-  ## of resLog is too small) set to 1 to assume uncorrelated sample
+  ## of \code{resLog} is too small) set to 1 to assume uncorrelated sample
   , isGapFilled = logical(0) ##<< logical vector whether entry is gap-filled 
   ## rather than an original measurement, see details
-  , na.rm = TRUE  ##<< neglect terms with NA vlaues in mu or sigma
+  , na.rm = TRUE  ##<< neglect terms with NA values in mu or sigma
 ){
   # only one term, return the parameters
   if (length(mu) == 1 ) return(
@@ -49,7 +49,8 @@ estimateSumLognormalSample <- function(
       mu, sigma = sigma, sigmaSum = sigmaSum, effAcf = effAcf, na.rm = na.rm)
     return(c(p , nEff = nEff))
   }
-  ##value<< numeric vector with components "mu", "sigma", and "nEff"
+  ##value<< numeric vector with components \code{mu}, \code{sigma}, 
+  ## and \code{nEff},
   ## the parameters of the lognormal distribution at log scale
   ## (Result of \code{link{estimateSumLognormal}})
   ## and the number of effective observations.
@@ -72,20 +73,20 @@ estimateSumLognormal <- function(
   ## to speed up computation by neglecting correlations among terms
   ## further apart.
   ## Set to zero to omit correlations.
-  , isStopOnNoTerm = FALSE ##<< if no finite estiamte is provide, by
-  ## default, NA is returned for the sum.
+  , isStopOnNoTerm = FALSE ##<< if no finite estimate is provided then by
+  ## default NA is returned for the sum.
   ## Set this to TRUE to issue an error instead.
   , effAcf                 ##<< numeric vector of effective autocorrelation
-  ## This overides arguments \code{corr} and \code{corrLength}
+  ## This overrides arguments \code{corr} and \code{corrLength}
   , na.rm = isStopOnNoTerm ##<< if there are terms with NA values in mu or sigma
   ## by default also the sum coefficients are NA. Set to TRUE to 
   ## neglect such terms in the sum.
 ){
   ##references<< 
-  ## Lo C (2013) WKB approximation for the sum of two correlated lognormal 
+  ## \code{Lo C (2013) WKB approximation for the sum of two correlated lognormal 
   ## random variables.
   ## Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
-  ## 10.12988/ams.2013.39511
+  ## 10.12988/ams.2013.39511}
   lengthMu <- length(mu)
   if (length(sigma) == 1) sigma <- rep(sigma, lengthMu)
   iFinite <- which( is.finite(mu) & is.finite(sigma))
@@ -136,6 +137,20 @@ estimateSumLognormal <- function(
   ## the parameters of the lognormal distribution at log scale
   return(c(mu = as.vector(muSum), sigma = as.vector(sqrt(sigma2Eff))))
 }
+attr(estimateSumLognormal,"ex") <- function(){
+  # distribution of the sum of two lognormally distributed random variables
+  mu1 = log(110)
+  mu2 = log(100)
+  sigma1 = log(1.2)
+  sigma2 = log(1.6)
+  (coefSum <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
+  # repeat with correlation
+  (coefSumCor <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
+  # expected value is equal, but variance with correlated variables is larger
+  getLognormMoments(coefSum["mu"],coefSum["sigma"])
+  getLognormMoments(coefSumCor["mu"],coefSumCor["sigma"])
+}
+
 
 estimateSumLognormalBenchmark <- function(
   ### Estimate the distribution parameters of the lognormal approximation to the sum

@@ -4,8 +4,8 @@
 \description{get the expected value and variance of a log-normal distribution}
 \usage{getLognormMoments(mu, sigma)}
 \arguments{
-  \item{mu}{center parameter (mean at log scale, log(median))}
-  \item{sigma}{scale parameter (standard deviation at log scale)}
+  \item{mu}{numeric vector of center parameter (mean at log scale, log(median))}
+  \item{sigma}{numeric vector of scale parameter (standard deviation at log scale)}
 }
 
 \value{numeric matrix with columns
@@ -13,13 +13,22 @@
 \item{var}{variance at original scale}
 \item{cv}{coefficient of variation: std/mean
 }}
-\references{Limpert E, Stahel W & Abbt M (2001)
+\references{\code{Limpert E, Stahel W & Abbt M (2001)
 Log-normal Distributions across the Sciences: Keys and Clues.
 Oxford University Press (OUP) 51, 341,
-10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}
+10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}}
 \author{Thomas Wutzler}
 
 
 
 
-
+\examples{
+# start by estimating lognormal parameters from moments
+.mean <- 1
+.var <- c(1.3,2)^2
+parms <- getParmsLognormForMoments(.mean, .var)
+#
+# computed moments must equal previous ones
+(ans <- getLognormMoments(parms[,"mu"], parms[,"sigma"]))
+cbind(.var, ans[,"var"])
+}

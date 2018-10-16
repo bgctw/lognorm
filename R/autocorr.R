@@ -10,22 +10,22 @@ computeEffectiveNumObs <- function(
   ## stripped before the computation proceeds. 
 ){
   ##references<< 
-  ## Zieba & Ramza (2011) 
+  ## \code{Zieba & Ramza (2011) 
   ## Standard Deviation of the Mean of Autocorrelated 
   ## Observations Estimated with the Use of the Autocorrelation Function 
   ## Estimated From the Data. 
   ## Metrology and Measurement Systems, 
-  ## Walter de Gruyter GmbH, 18 10.2478/v10178-011-0052-x
+  ## Walter de Gruyter GmbH, 18 10.2478/v10178-011-0052-x}
   ## 
-  ## Bayley & Hammersley (1946) 
+  ## \code{Bayley & Hammersley (1946) 
   ## The "effective" number of independent observations in an autocorrelated 
   ## time series. 
-  ## Supplement to the Journal of the Royal Statistical Society, JSTOR,8,184-197
+  ## Supplement to the Journal of the Royal Statistical Society, JSTOR,8,184-197}
   #
   ##details<< Handling of NA values: NAs at the beginning or end and are 
   ## just trimmed before computation and pose no problem. 
-  ## However with NAs aside from edges, the return value isbiased low,
-  ## because correlatations terms are subtracted for those positions.
+  ## However with NAs aside from edges, the return value is biased low,
+  ## because correlation terms are subtracted for those positions.
   resTr <- .trimNA(res)
   if (!isTRUE(na.rm) & any(is.na(resTr))) return(NA_integer_)
   isFin <- is.finite(resTr)
@@ -44,6 +44,19 @@ computeEffectiveNumObs <- function(
   ##value<< integer scalar: effective number of observations
   nEff
 }
+attr(computeEffectiveNumObs,"ex") <- function(){
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+  res[100:120] <- NA
+  # plot the series of autocorrelated random variables
+  plot(res)
+  # plot their empirical autocorrelation function
+  acf(res, na.action = na.pass)
+  #effAcf <- computeEffectiveAutoCorr(res)
+  # the effective number of parameters is less than number of 1000 samples
+  (nEff <- computeEffectiveNumObs(res, na.rm = TRUE))
+}
+
 
 .trimNA <- function(
   ### remove NA values at the start and end
@@ -72,28 +85,46 @@ computeEffectiveAutoCorr <- function(
   ##details<<
   ## Returns all components before first negative autocorrelation
   ##references<<
-  ## Zieba 2011 Standard Deviation of the Mean of Autocorrelated
+  ## \code{Zieba 2011 Standard Deviation of the Mean of Autocorrelated
   ## Observations Estimated with the Use of the Autocorrelation Function Estimated
-  ## From the Data
+  ## From the Data}
   n <- length(res)
   if (!is.finite(nC)) return(c(1))
-  ##value<< numeric vector: stongest compponents of the autocorrelation function
+  ##value<< numeric vector: strongest components of the autocorrelation function
   ans$acf[1:nC]
 }
+attr(computeEffectiveAutoCorr,"ex") <- function(){
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+  res[100:120] <- NA
+  (effAcf <- computeEffectiveAutoCorr(res))
+}
+
 
 #' @export
 varEffective <- function(
   ### estimate the variance of a correlated time series
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
-  , nEff = computeEffectiveNumObs(res) ##<< effective number of observations
+  , nEff = computeEffectiveNumObs(res, na.rm = na.rm) ##<< effective 
+  ## number of observations
+  , na.rm = FALSE  ##<< set to TRUE to remove NA cases before computation
   , ...  ##<< further arguments to \code{\link{var}}
 ) {
   ##details<< The BLUE is not anymore the usual variance, but a modified
-  ## variance as given in Zieba 2011
+  ## variance as given in \code{Zieba 2011}
   a <- 1
-  var(res, ...) * nEff/(nEff - 1)
+  var(res, na.rm = na.rm, ...) * nEff/(nEff - 1)
   ### The estimated variance of the sample
 }
+attr(varEffective,"ex") <- function(){
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+  res[100:120] <- NA
+  # if correlations are neglected, the estimate of the variance is biased low
+  (varNeglectCorr <- var(res, na.rm = TRUE))
+  (varCorr <- varEffective(res, na.rm = TRUE))
+}
+
 
 .tmp.f <- function(){
   dss <- dsfP %>% mutate(
