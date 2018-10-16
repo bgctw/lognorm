@@ -1,5 +1,5 @@
 /*.html
 /figure/
 /cache/
-/*.md
-/*_files/
+#/*.md
+#/*_files/

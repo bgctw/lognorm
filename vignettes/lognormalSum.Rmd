@@ -1,5 +1,4 @@
 ---
-title: Approximating the sum of lognormal random variables
 output: 
   rmarkdown::html_vignette: 
     keep_md: true
@@ -76,4 +75,4 @@ theme(axis.title.x = element_blank())
 ```
 
 For a test on correlated variables see the 
-[aggregateCorrelated vignette](aggregateCorrelated.html).
+aggregateCorrelated vignette ([html](aggregateCorrelated.html) or [md](aggregateCorrelated.md)).

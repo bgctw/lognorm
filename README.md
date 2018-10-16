@@ -33,7 +33,6 @@ A simple example computes the distribution parameters of the sum of two correlat
 
 ``` r
 require(lognorm)
-#> Loading required package: lognorm
 means <- c(110,100)
 sigmaStar <- c(1.5,1.5)
 corr <- setMatrixOffDiagonals(diag(nrow = 2), value = 0.6, isSymmetric = TRUE)
@@ -59,7 +58,7 @@ abline(v = getLognormMedian(coefSum["mu"], coefSum["sigma"]), lty = "dotdash")
 
 ![](tools/README-example-1.png)
 
-The sum of the expected values is conserved, while the mutliplicative standard deviation decreases during aggregtion:
+The sum of the expected values is conserved, while the mutliplicative standard deviation decreases during aggregation:
 
 ``` r
 c( 
@@ -69,4 +68,4 @@ c(
 #> 210.000000   1.437293
 ```
 
-See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) for further examples.
+See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) (\*.md) for further examples.

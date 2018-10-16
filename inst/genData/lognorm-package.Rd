@@ -36,7 +36,7 @@ Approximate the sum of correlated lognormals
  \item{According to Lo 2013: \code{\link{estimateSumLognormal}} }
  }
 
-Have a look at the package vignettes.
+Also have a look at the \href{../doc/index.html}{package vignettes}.
  
 }%details
 

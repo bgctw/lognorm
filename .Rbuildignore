@@ -7,6 +7,9 @@
 ^NEWS\.Rmd$          
 vignettes/figure	
 vignettes/cache	
+vignettes/.*_files/
+vignettes/.*\.html
+vignettes/.*\.md
 ^scratch$
 ^tools$
 ^tmp$

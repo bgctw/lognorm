@@ -81,4 +81,4 @@ c(
   , sigmaStar = unname(exp(coefSum["sigma"])))
 ```
 
-See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) for further examples.
+See the [package vignettes](https://github.com/bgctw/lognorm/tree/master/vignettes) (*.md) for further examples.
