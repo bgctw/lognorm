@@ -21,9 +21,9 @@ A single draw of the autocorrelated 100 variables looks like the
 following.
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   733.8   944.5   997.3  1000.8  1053.2  1337.0
+    ##   763.1   946.7   999.2  1001.5  1053.0  1337.1
 
-<img src="aggregateCorrelated_files/figure-markdown_strict/unnamed-chunk-14-1.png" style="display:block; margin: auto" />
+<img src="aggregateCorrelated_files/figure-markdown_strict/unnamed-chunk-3-1.png" style="display:block; margin: auto" />
 
 Estimating the correlation matrix and effective number of parameters
 --------------------------------------------------------------------
@@ -38,11 +38,11 @@ The effective one estimated from the sample is:
 
     (effAcf <- computeEffectiveAutoCorr(ds$xErr))
 
-    ## [1] 1.00000000 0.32684730 0.04178930 0.07492118 0.02995742
+    ## [1] 1.000000000 0.208674342 0.007415853
 
     (nEff <- computeEffectiveNumObs(ds$xErr))
 
-    ## [1] 51.76171
+    ## [1] 70.04222
 
 Due to autocorrelation, the effective number of parameters is less than
 nObs = `R nObs`.
@@ -70,4 +70,4 @@ Its expected value corresponds to the expected value (100\*10).
 The lognormal approximation of the distribution of the sum, is close to
 the distribution of the 10000 repetitions.
 
-<img src="aggregateCorrelated_files/figure-markdown_strict/unnamed-chunk-19-1.png" style="display:block; margin: auto" />
+<img src="aggregateCorrelated_files/figure-markdown_strict/unnamed-chunk-8-1.png" style="display:block; margin: auto" />
