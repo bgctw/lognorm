@@ -78,8 +78,9 @@ computeEffectiveAutoCorr <- function(
   # next get the number of elements before crossing the zero line
   nC <- suppressWarnings(min(which(ans$acf < 0)) - 1)
   if (!is.finite(nC)) {
+    # if there was no below zero correlation within defalt lag.max then
+    # repeat acf with compting all lags
     ans <- acf(res, na.action = na.pass, plot = FALSE, lag.max = Inf)
-    # next get the number of elements before crossing the zero line
     nC <- suppressWarnings(min(which(ans$acf < 0)) - 1)
   }
   ##details<<
@@ -196,3 +197,49 @@ setMatrixOffDiagonals <- function(
   ##value<< matrix with modified diagonal elements
   x
 }
+
+seCorSqrtN <- function(
+  ### compute the standard error accounting for empirical correlations
+  x  ##<< numeric vector
+  , ...   ##<< further arguments to \code{\link{acf}}
+  , lag.max = round(sqrt(sum(is.finite(x))))  ##<< integer scalar:
+  ## maxium range of correlation
+){
+  # deprecated, superseeded by seCor
+  ##details<< computation according to 
+  ##  https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series
+  n <- length(x)  
+  kmax <- min(lag.max, n - 1)
+  varx <- var(x, na.rm = TRUE)
+  g1 <- varx * acf(x, lag.max = kmax, ..., plot = FALSE, na.action = na.pass)
+  g0 <- g1[1]
+  g <- g1[-1]
+  k <- 1:kmax
+  varCor <- 1/n*(g0 + 2*sum( (n - k)/n * g))
+  ##value<< numeric scalar of standard error of the mean of x
+  sqrt(varCor)
+}
+
+#' @export
+seCor <- function(
+  ### compute the standard error accounting for empirical correlations
+  x  ##<< numeric vector
+){
+  ##details<< computation according to 
+  ## https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series
+  ## but with considering only correlations up to first negative
+  n <- length(na.omit(x))  
+  varx <- var(x, na.rm = TRUE)
+  effAcf <- computeEffectiveAutoCorr(x)
+  kmax <- length(effAcf) - 1
+  # if there is no empirical autocorrelation
+  if (kmax == 0) return(sqrt(varx/n))
+  g1 <- varx * effAcf
+  g0 <- g1[1]
+  g <- g1[-1]
+  k <- 1:kmax
+  varCor <- 1/n*(g0 + 2*sum( (n - k)/n * g))
+  ##value<< numeric scalar of standard error of the mean of x
+  sqrt(varCor)
+}
+
