@@ -140,8 +140,9 @@ test_that("seCor short series",{
   expect_equal(seCor(1), NA_real_)
   expect_equal(seCor(1:2), 0.5)
   expect_equal(seCor(1:3), sqrt(var(1:3)/3)) 
-  expect_equal(seCor(rep(1,4)), 0) 
-  expect_equal(seCor(c(1,2,NA)), 0.5) 
-  expect_equal(seCor(c(1,NA,NA)), NA_real_) 
+  expect_equal(seCor(rep(1,4)), 0) # NA correlation but 0 variance
+  expect_equal(seCor(c(1,2,NA)), NA_real_) 
+  expect_equal(seCor(c(1,2,NA), na.rm = TRUE), 0.5) 
+  expect_equal(seCor(c(1,NA,NA), na.rm = TRUE), NA_real_) 
 })
 

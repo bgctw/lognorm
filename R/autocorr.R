@@ -72,16 +72,18 @@ attr(computeEffectiveNumObs,"ex") <- function(){
 computeEffectiveAutoCorr <- function(
   ### return the vector of effective components of the autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
+  , type = "correlation"
 ){
   # first compute empirical autocorrelations
-  ans <- acf(res, na.action = na.pass, plot = FALSE)
+  ans <- acf(res, na.action = na.pass, plot = FALSE, type = type)
   # next get the number of elements before crossing the zero line
-  nC <- suppressWarnings(min(which(ans$acf < 0)) - 1)
+  nC <- suppressWarnings(min(which(ans$acf <= 0)) - 1)
   if (!is.finite(nC)) {
     # if there was no below zero correlation within defalt lag.max then
     # repeat acf with compting all lags
-    ans <- acf(res, na.action = na.pass, plot = FALSE, lag.max = Inf)
-    nC <- suppressWarnings(min(which(ans$acf < 0)) - 1)
+    ans <- acf(res, na.action = na.pass, plot = FALSE, type = type, lag.max = Inf)
+    # append -1 so that nC equals to full lenght if no negative correlation
+    nC <- min(which(c(ans$acf,-1) <= 0)) - 1
   }
   ##details<<
   ## Returns all components before first negative autocorrelation
@@ -89,9 +91,8 @@ computeEffectiveAutoCorr <- function(
   ## \code{Zieba 2011 Standard Deviation of the Mean of Autocorrelated
   ## Observations Estimated with the Use of the Autocorrelation Function Estimated
   ## From the Data}
-  n <- length(res)
-  if (!is.finite(nC)) return(c(1))
   ##value<< numeric vector: strongest components of the autocorrelation function
+  nC <- pmax(1,nC) # return at least one component
   ans$acf[1:nC]
 }
 attr(computeEffectiveAutoCorr,"ex") <- function(){
@@ -224,17 +225,21 @@ seCorSqrtN <- function(
 seCor <- function(
   ### compute the standard error accounting for empirical correlations
   x  ##<< numeric vector
+  , na.rm = FALSE ##<< logical. Should missing values be removed?
 ){
   ##details<< computation according to 
   ## https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series
   ## but with considering only correlations up to first negative
-  n <- length(na.omit(x))  
-  varx <- var(x, na.rm = TRUE)
-  effAcf <- computeEffectiveAutoCorr(x)
-  kmax <- length(effAcf) - 1
+  n <- if(na.rm) length(na.omit(x)) else length(x)
+  #effAcf <- computeEffectiveAutoCorr(x, na.action = {if(na.rm) na.omit else na.pass})
+  # do not remove NAs for autocorrelation computation to preserve distances
+  g1 <- computeEffectiveAutoCorr(x, type = "covariance")
+  kmax <- length(g1) - 1
   # if there is no empirical autocorrelation
-  if (kmax == 0) return(sqrt(varx/n))
-  g1 <- varx * effAcf
+  if (kmax == 0){
+    varx <- var(x, na.rm = na.rm)
+    return(sqrt(varx/n))
+  } 
   g0 <- g1[1]
   g <- g1[-1]
   k <- 1:kmax
