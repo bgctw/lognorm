@@ -1,11 +1,6 @@
 ## Note
-Now with including examples in addition to vignettes.
-
-Provide to the R community
-
-* Approximating the sum of lognormals
-* estimating distribution parameters from observations statistics
-* computing moments and other statistics
+Added support for the common use case of computing standard error of an 
+autocorrelated time series.
 
 ## Test environments
 * local R 3.4.4 on Mint17 64bit
@@ -14,12 +9,9 @@ Provide to the R community
 
 ## R CMD check results
 There were no ERRORs nor WARNINGs 
-One note that this is a new submssion.
 
-The first two possible misspellings in DESCRIPTION are caused by names in a 
-literature reference.
-Third: Throughout this package I consistently write lognormal instead of log-normal.
-
+One note of misspelling in DESCRIPTION
+  caused by correct "et al." in citation.
 
 
 

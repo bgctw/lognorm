@@ -1,7 +1,7 @@
 \name{computeEffectiveNumObs}
 \alias{computeEffectiveNumObs}
 \title{computeEffectiveNumObs}
-\description{compute the effective number of observations taking into account autocorrelation}
+\description{Compute the effective number of observations taking into account autocorrelation}
 \usage{computeEffectiveNumObs(res, effAcf = computeEffectiveAutoCorr(res), 
     na.rm = FALSE)}
 \arguments{

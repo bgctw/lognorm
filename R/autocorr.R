@@ -1,7 +1,7 @@
 
 #' @export
 computeEffectiveNumObs <- function(
-  ### compute the effective number of observations taking into account autocorrelation
+  ### Compute the effective number of observations taking into account autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
   , effAcf = computeEffectiveAutoCorr(res) ##<< autocorrelation coefficients.
   ## The first entry is fixed at 1 for zero distance.
@@ -70,7 +70,7 @@ attr(computeEffectiveNumObs,"ex") <- function(){
 
 #' @export
 computeEffectiveAutoCorr <- function(
-  ### return the vector of effective components of the autocorrelation
+  ### Return the vector of effective components of the autocorrelation
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
   , type = "correlation"
 ){
@@ -105,7 +105,7 @@ attr(computeEffectiveAutoCorr,"ex") <- function(){
 
 #' @export
 varEffective <- function(
-  ### estimate the variance of a correlated time series
+  ### Estimate the variance of a correlated time series
   res  ##<< numeric of autocorrelated numbers, usually observation - model residuals
   , nEff = computeEffectiveNumObs(res, na.rm = na.rm) ##<< effective 
   ## number of observations
@@ -223,20 +223,28 @@ seCorSqrtN <- function(
 
 #' @export
 seCor <- function(
-  ### compute the standard error accounting for empirical correlations
+  ### Compute the standard error accounting for empirical autocorrelations
   x  ##<< numeric vector
   , na.rm = FALSE ##<< logical. Should missing values be removed?
+  , effCov = ##<< numeric vector of effective covariance components
+    ## first entry is the variance. See \code{\link{computeEffectiveAutoCorr}}
+    computeEffectiveAutoCorr(x, type = "covariance")
 ){
-  ##details<< computation according to 
-  ## https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series
-  ## but with considering only correlations up to first negative
-  n <- if(na.rm) length(na.omit(x)) else length(x)
+  ##details<< Computation follows 
+  ## https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series.
+  ## 
+  ##details<< The default uses empiricial autocorrelation
+  ## estimates from the supplied data up to first negative component.
+  ## For short series of \code{x} it is strongly recommended to to
+  ## provide \code{effCov} that was estimated on a longer time series.
+  n <- if (na.rm) length(na.omit(x)) else length(x)
   #effAcf <- computeEffectiveAutoCorr(x, na.action = {if(na.rm) na.omit else na.pass})
   # do not remove NAs for autocorrelation computation to preserve distances
-  g1 <- computeEffectiveAutoCorr(x, type = "covariance")
+  if (n == 0) return(NA_real_)
+  g1 <- effCov[1:min(length(x),length(effCov))]
   kmax <- length(g1) - 1
   # if there is no empirical autocorrelation
-  if (kmax == 0){
+  if (kmax == 0) {
     varx <- var(x, na.rm = na.rm)
     return(sqrt(varx/n))
   } 

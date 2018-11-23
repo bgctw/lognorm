@@ -1,7 +1,7 @@
 \name{varEffective}
 \alias{varEffective}
 \title{varEffective}
-\description{estimate the variance of a correlated time series}
+\description{Estimate the variance of a correlated time series}
 \usage{varEffective(res, nEff = computeEffectiveNumObs(res, 
     na.rm = na.rm), na.rm = FALSE, ...)}
 \arguments{

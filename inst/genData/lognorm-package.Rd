@@ -16,25 +16,37 @@ Utilities for the lognormal distribution in R
 
 Moments and mode 
  \itemize{
- \item{ Expected value and variance: \code{\link{getLognormMoments}} }
- \item{ Mode: \code{\link{getLognormMode}} }
- \item{ Median: \code{\link{getLognormMedian}} }
+ \item Expected value and variance: \code{\link{getLognormMoments}} 
+ \item Mode: \code{\link{getLognormMode}} 
+ \item Median: \code{\link{getLognormMedian}} 
  }
     
 Estimating parameters 
- \itemize{
- \item{from sample: 
-   \code{\link{estimateParmsLognormFromSample}} }
- \item{corresponding to mean and variance at original scale: 
-   \code{\link{getParmsLognormForMoments}} }
- \item{corresponding to mean and multiplicative standard deviation at original scale: 
-   \code{\link{getParmsLognormForExpval}} }
- }
+\itemize{
+ \item from sample: 
+   \code{\link{estimateParmsLognormFromSample}} 
+ \item corresponding to mean and variance at original scale: 
+   \code{\link{getParmsLognormForMoments}} 
+ \item corresponding to mean and multiplicative standard deviation at original 
+   scale: \code{\link{getParmsLognormForExpval}} 
+}
  
 Approximate the sum of correlated lognormals 
- \itemize{
- \item{According to Lo 2013: \code{\link{estimateSumLognormal}} }
- }
+\itemize{
+ \item According to Lo 2013: \code{\link{estimateSumLognormal}} 
+}
+ 
+Utilities for correlated data. These functions maybe moved to
+a separate package in future.
+\itemize{
+ \item Estimate standard error of the mean: \code{\link{seCor}} 
+ \item Compute the effective number of observations taking into 
+   account autocorrelation: \code{\link{computeEffectiveNumObs}} 
+ \item Return the vector of effective components of the autocorrelation: 
+   \code{\link{computeEffectiveAutoCorr}} 
+ \item Estimate the variance of a correlated time series: 
+   \code{\link{varEffective}} 
+}
 
 Also have a look at the \href{../doc/index.html}{package vignettes}.
  

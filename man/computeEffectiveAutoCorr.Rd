@@ -1,7 +1,7 @@
 \name{computeEffectiveAutoCorr}
 \alias{computeEffectiveAutoCorr}
 \title{computeEffectiveAutoCorr}
-\description{return the vector of effective components of the autocorrelation}
+\description{Return the vector of effective components of the autocorrelation}
 \usage{computeEffectiveAutoCorr(res, type = "correlation")}
 \arguments{
   \item{res}{numeric of autocorrelated numbers, usually observation - model residuals}
