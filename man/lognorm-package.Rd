@@ -25,10 +25,18 @@ Estimating parameters
 \itemize{
  \item from sample: 
    \code{\link{estimateParmsLognormFromSample}} 
- \item corresponding to mean and variance at original scale: 
+ \item from mean and variance at original scale: 
    \code{\link{getParmsLognormForMoments}} 
- \item corresponding to mean and multiplicative standard deviation at original 
+ \item from mean and multiplicative standard deviation at original 
    scale: \code{\link{getParmsLognormForExpval}} 
+ \item from expected value and upper quantile: 
+   \code{\link{getParmsLognormForMeanAndUpper}} 
+ \item from median and upper quantile: 
+   \code{\link{getParmsLognormForMedianAndUpper}} 
+ \item from mode and upper quantile: 
+   \code{\link{getParmsLognormForModeAndUpper}} 
+ \item from lower and upper quantile: 
+   \code{\link{getParmsLognormForLowerAndUpper}} 
 }
  
 Approximate the sum of correlated lognormals 

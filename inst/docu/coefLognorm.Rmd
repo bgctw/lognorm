@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Lognormal parameters for  mode and upper quantile
+
+Mode: $mode = e^{\mu - \sigma^2}$
+
+Upper quantile: $upper = e^{\mu + f \sigma}$.
+
+log transformed:
+$$
+m = \mu - \sigma^2 \\
+u = \mu + f \sigma
+$$
+Can solve for $\sigma$:
+
+$$
+u - m = f \sigma + \sigma^2 \\
+0 = \sigma^2 + f \sigma - (u-m)
+$$
+Solution for quadratic equations of the form $x^2 + px + q$ are
+$x_{1,1} = -p/2 \pm \sqrt{p^2/4 - q}$.
+
+$$
+\sigma_{1,2} = -f/2 \pm \sqrt{f^2/4 + (u-m)}
+$$
+
+Since $u$ is an upper quantile, $(u-m)>0$ and the root is larger than $f/2$.
+Hence, there is one positive solution:
+
+$$
+\sigma = -f/2 + \sqrt{f^2/4 + (u-m)}
+\\
+\mu = m + \sigma^2
+$$
+
+
+# Lognormal parameters for  Mean and upper quantile
+
+Mode: $mean = e^{\mu + \sigma^2/2}$
+
+Upper quantile: $upper = e^{\mu + f \sigma}$.
+
+log transformed:
+$$
+m = \mu + \sigma^2/2 \\
+u = \mu + f \sigma
+$$
+Can solve for $\sigma$:
+
+$$
+u - m = f \sigma - \sigma^2/2 \\
+0 = \sigma^2 - 2 f \sigma + 2(u-m) \\
+\sigma_{1,2} = f \pm \sqrt{f^2 - 2(u-m)}
+$$
+
+Hence, there are two positive solutions. We are interested in the one
+that has the smaller standard deviation.
+
+$$
+\sigma = f - \sqrt{f^2 - 2(u-m)}
+\\
+\mu = m - \sigma^2/2
+$$

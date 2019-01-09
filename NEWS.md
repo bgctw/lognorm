@@ -4,6 +4,9 @@
    standard deviation (sigmaStar) of the sum to be the mean of given sigmaStar.
    Before took it assumed to be the maximum. But this led to larger confidence 
    boundsas compared to using the normal assumption.
+   
+- Estimate parameters from various statistics, such as mean and an
+    upper quantile value, i.e. a practical maximum.
 
 # lognorm 0.1.4
 
