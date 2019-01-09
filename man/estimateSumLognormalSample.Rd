@@ -22,8 +22,13 @@ rather than an original measurement, see details}
 are estimated using all the samples. Otherwise, the scale parameter
 (uncertainty) is first estimated using only the non-gapfilled records.
 
-If there are only gap-filled records, assume uncertainty
-to be the largest uncertainty of given gap-filled records.}
+Also use isGapFilled == TRUE for records, where sigma cannot be trusted. 
+When setting sigma to missing, this is also affecting the expected value.
+
+If there are only gap-filled records, 
+assume uncertainty to be 
+(before v0.1.5: the largest uncertainty of given gap-filled records.)
+the mean of the given multiplicative standard deviation}
 \value{numeric vector with components \code{mu}, \code{sigma}, 
 and \code{nEff},
 the parameters of the lognormal distribution at log scale

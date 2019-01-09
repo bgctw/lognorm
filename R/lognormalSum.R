@@ -23,12 +23,18 @@ estimateSumLognormalSample <- function(
   ## \code{!length(isGapFilled)} (the default), distribution parameters
   ## are estimated using all the samples. Otherwise, the scale parameter
   ## (uncertainty) is first estimated using only the non-gapfilled records.
+  ## 
+  ## Also use isGapFilled == TRUE for records, where sigma cannot be trusted. 
+  ## When setting sigma to missing, this is also affecting the expected value.
   if (length(isGapFilled) && any(isGapFilled)) {
     isMeasured <- !isGapFilled
     sigmaSum <- if (!sum(isMeasured)) {
-      ##details<< If there are only gap-filled records, assume uncertainty
-      ## to be the largest uncertainty of given gap-filled records.
-      max(sigma)
+      ##details<< If there are only gap-filled records, 
+      ## assume uncertainty to be 
+      ## (before v0.1.5: the largest uncertainty of given gap-filled records.)
+      ## the mean of the given multiplicative standard deviation
+      #max(sigma)
+      log(mean(exp(sigma), na.rm = TRUE))
     } else {
       # recursive call with only the measured records
       # set non-measured to NA but keep structure for autocorrelation distances
