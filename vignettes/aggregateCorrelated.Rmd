@@ -34,9 +34,11 @@ library(lognorm)
 if (!require(ggplot2) || !require(dplyr) || !require(tidyr) || !require(purrr) ||
     !require(mvtnorm)
     ) {
-	print(paste("To generate this vignette, ggplot2, dplyr, tidyr, purr,"
-	            ," and mvtnorm are required."))
-	exit(0)
+  msg = paste0("To generate this vignette, ggplot2, dplyr, tidyr, purr,"
+	            ," and mvtnorm are required.")
+  print(msg)
+	warning(msg)
+  knitr::knit_exit()
 }
 themeTw <- theme_bw(base_size = 10) + 
   theme(axis.title = element_text(size = 9))
