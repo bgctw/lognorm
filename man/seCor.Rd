@@ -14,7 +14,7 @@ first entry is the variance. See \code{\link{computeEffectiveAutoCorr}}}
 https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series.
 
 
-The default uses empiricial autocorrelation
+The default uses empirical autocorrelation
 estimates from the supplied data up to first negative component.
 For short series of \code{x} it is strongly recommended to to
 provide \code{effCov} that was estimated on a longer time series.}

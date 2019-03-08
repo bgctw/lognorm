@@ -27,3 +27,4 @@ vignettes/*.pdf
 .Rproj.user
 *.Rproj
 README.html
+CRAN-RELEASE
