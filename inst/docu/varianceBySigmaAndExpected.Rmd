@@ -45,16 +45,18 @@ lines(dnorm(xPred, m, sqrt(V))~xPred, col = "blue", lty = "dashed")
 lines(dlnorm(xPred, mu, sigma)~xPred, col = "green")
 ```
 ```{r}
-df <- data.frame(nu = c(0.05,0.1,0.2,0.5,1,2,5,10,20))
-df$sigmaStar = sqrt(df$nu^2 + 1)
+df <- data.frame(cv = c(0.05,0.1,0.2,0.5,1,2,5,10,20))
+df$sigma = sqrt(log(df$cv^2 + 1))
+df$sigmaStar <- exp(df$sigma)
+#df$cvRev <- sqrt(exp(log(df$sigmaStar)^2) - 1)
 df
 ```
 ```{r}
-plot(sigmaStar ~ nu, df[1:3,])
+plot(sigmaStar ~ cv, df[1:3,])
 ```
 
 ```{r}
 sigmaStar <- 1.2
-(nu <- sqrt(sigmaStar^2 - 1))
+(cv <- sqrt(exp(log(sigmaStar)^2) - 1))
 ```
 

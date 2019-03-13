@@ -1,18 +1,27 @@
 ## Note
 Added support for computing moments and statistics.
 
+Changed doi format (brackets) in DESCRIPTION according to 
+comment from Uwe Ligges from 
+10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2
+to
+10.1641/0006-3568(2001)051%5B0341:lndats%5D2.0.co;2
+
+And changed back to original doi after second comment 
+by Uwe Ligges
+
+
 ## Test environments
+with old doi
 * local R 3.4.4 on Mint17 64bit
 * Ubuntu 14.04.5 LTS (on travis-ci), 14.04
 * win-builder (devel)
 * R-Hub
 
+with updated doi
+* local R 3.4.4 on Mint17 64bit
+
 ## R CMD check results
-There were no ERRORs nor WARNINGs 
-
-Note on wrong doi: I checked that the doi correctly resolves
-http://dx.doi.org/10.1641%2F0006-3568(2001)051[0341%3Alndats]2.0.co%3B2
-
-
+Note on problem with doi
 
   
