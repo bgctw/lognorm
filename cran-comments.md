@@ -10,6 +10,8 @@ to
 And changed back to original doi after second comment 
 by Uwe Ligges
 
+Changed again to escaped form after email from Kurt Hornik
+
 
 ## Test environments
 with old doi

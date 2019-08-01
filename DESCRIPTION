@@ -4,7 +4,7 @@ Version: 0.1.5
 Author: Thomas Wutzler
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: The lognormal distribution  
-  (Limpert et al. (2001) <doi:10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2>)
+  (Limpert et al. (2001) <doi:10.1641/0006-3568(2001)051%5B0341:lndats%5D2.0.co;2>)
   can characterize uncertainty that is bounded by zero.
   This package provides estimation of distribution parameters, computation of
   moments and other basic statistics, and an approximation of the distribution
