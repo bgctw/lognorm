@@ -1,3 +1,6 @@
+# lognorm 0.1.6
+fix for CRAN: reformat (html-escape) doi in DESCRIPTION
+
 # lognorm 0.1.5
 
 - Sum of lognormals: if all values are gap-filled, assume multiplicative
