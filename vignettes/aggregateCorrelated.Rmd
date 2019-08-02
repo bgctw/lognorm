@@ -34,7 +34,7 @@ library(lognorm)
 if (!require(ggplot2) || !require(dplyr) || !require(tidyr) || !require(purrr) ||
     !require(mvtnorm)
     ) {
-  msg = paste0("To generate this vignette, ggplot2, dplyr, tidyr, purr,"
+  msg = paste0("To generate this vignette, ggplot2, dplyr, tidyr, purrr,"
 	            ," and mvtnorm are required.")
   print(msg)
 	warning(msg)
@@ -54,7 +54,7 @@ of 1.7.
 nObs <- 100; nRep <- 10000
 #nObs <- 1000; nRep <- 100
 xTrue <- rep(10, nObs)
-sigmaStar <- rep(1.7, nObs) # multiplicative stddev of 1.2
+sigmaStar <- rep(1.7, nObs) # multiplicative stddev 
 theta <- getParmsLognormForExpval(xTrue, sigmaStar)
 # generate observations with correlated errors
 acf1 <- c(0.4,0.1)
@@ -78,24 +78,24 @@ ggplot( ds, aes(i, xObs)) +
 
 ## Estimating the correlation matrix and effective number of parameters
 
-The autocorrelation used to generate the sample was:
+The original autocorrelation function used to generate the sample was:
 ```{r}
 c(1, acf1)
 ```
 
-The effective one estimated from the sample is:
+The effective autocorrelation function estimated from the sample is:
 ```{r}
 (effAcf <- computeEffectiveAutoCorr(ds$xErr))
 (nEff <- computeEffectiveNumObs(ds$xErr))
 ```
 
 Due to autocorrelation, the effective number of parameters is less than 
-nObs = `R nObs`.
+nObs = `r nObs`.
 
 ## Computing the mean and its standard deviation
 
 First we compute the distribution parameter of the sum of the 100 variables.
-The multiplicative uncertainty has decreased.
+The multiplicative uncertainty has decreased from 1.7.
 
 ```{r}
 #coefSum <- estimateSumLognormal( theta[,1], theta[,2], effAcf = effAcf )

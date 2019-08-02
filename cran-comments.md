@@ -10,8 +10,10 @@ to
 And changed back to original doi after second comment 
 by Uwe Ligges
 
-Changed again to escaped form after email from Kurt Hornik
+Changed again to escaped form after email from Kurt Hornik.
 
+Removed link to md file in vignette. (The link worked nice on github but not
+for the installed package.)
 
 ## Test environments
 with old doi
@@ -20,7 +22,7 @@ with old doi
 * win-builder (devel)
 * R-Hub
 
-with updated doi
+with updated doi and link:
 * local R 3.4.4 on Mint17 64bit
 
 ## R CMD check results

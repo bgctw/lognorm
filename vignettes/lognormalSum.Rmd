@@ -75,4 +75,8 @@ theme(axis.title.x = element_blank())
 ```
 
 For a test on correlated variables see the 
-aggregateCorrelated vignette ([html](aggregateCorrelated.html) or [md](aggregateCorrelated.md)).
+[aggregateCorrelated vignette](aggregateCorrelated.html).
+```{r eval=FALSE, include=FALSE}
+# complaint by CRAN: [md](aggregateCorrelated.md))
+```
+
