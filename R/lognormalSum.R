@@ -1,16 +1,42 @@
+#' Estimate the parameters of the lognormal approximation to the sum
+#'
+#' @describeIn estimateSumLognormalSample
+#'   In addition to \code{estimateSumLognormal} take care of missing values
+#'   and estimate correlation terms.
+#' @param mu numeric vector of center parameters of terms at log scale
+#' @param sigma numeric vector of scale parameter of terms at log scale
+#' @param resLog time series of model-residuals at log scale 
+#' to estimate correlation
+#' @param effAcf effective autocorrelation
+#' coefficients (may provide precomputed for efficiency or if the sample
+#' of \code{resLog} is too small) set to 1 to assume uncorrelated sample
+#' @param isGapFilled logical vector whether entry is gap-filled 
+#' rather than an original measurement, see details
+#' @param na.rm neglect terms with NA values in mu or sigma
+#' 
+#' @details 
+#' If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
+#' \code{!length(isGapFilled)} (the default), distribution parameters
+#' are estimated using all the samples. Otherwise, the scale parameter
+#' (uncertainty) is first estimated using only the non-gapfilled records.
+#' 
+#' Also use isGapFilled == TRUE for records, where sigma cannot be trusted. 
+#' When setting sigma to missing, this is also affecting the expected value.
+#' @details If there are only gap-filled records, 
+#' assume uncertainty to be 
+#' (before v0.1.5: the largest uncertainty of given gap-filled records.)
+#' the mean of the given multiplicative standard deviation
+#'
+#' @return numeric vector with components \code{mu}, \code{sigma}, 
+#' and \code{nEff},
+#' i.e. the parameters of the lognormal distribution at log scale
+#' and the number of effective observations.
 #' @export
 estimateSumLognormalSample <- function(
-  ### Estimate the parameters of the lognormal approximation to the sum
-  mu        ##<< numeric vector of center parameters of terms at log scale
-  , sigma   ##<< numeric vector of variance parameter of terms at log scale
-  , resLog  ##<< time series of model-residuals at log scale 
-  ## to estimate correlation
-  , effAcf = computeEffectiveAutoCorr(resLog) ##<< effective autocorrelation
-  ## coefficients (may provide precomputed for efficiency or if the sample
-  ## of \code{resLog} is too small) set to 1 to assume uncorrelated sample
-  , isGapFilled = logical(0) ##<< logical vector whether entry is gap-filled 
-  ## rather than an original measurement, see details
-  , na.rm = TRUE  ##<< neglect terms with NA values in mu or sigma
+  mu, sigma, resLog  
+  , effAcf = computeEffectiveAutoCorr(resLog) 
+  , isGapFilled = logical(0) 
+  , na.rm = TRUE  ##<< 
 ){
   # only one term, return the parameters
   if (length(mu) == 1 ) return(
@@ -18,21 +44,9 @@ estimateSumLognormalSample <- function(
   )
   if (length(sigma) == 1) sigma <- rep(sigma, length(mu))
   nEff <- computeEffectiveNumObs(resLog, effAcf = effAcf, na.rm = na.rm)
-  ##details<<
-  ## If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
-  ## \code{!length(isGapFilled)} (the default), distribution parameters
-  ## are estimated using all the samples. Otherwise, the scale parameter
-  ## (uncertainty) is first estimated using only the non-gapfilled records.
-  ## 
-  ## Also use isGapFilled == TRUE for records, where sigma cannot be trusted. 
-  ## When setting sigma to missing, this is also affecting the expected value.
   if (length(isGapFilled) && any(isGapFilled)) {
     isMeasured <- !isGapFilled
     sigmaSum <- if (!sum(isMeasured)) {
-      ##details<< If there are only gap-filled records, 
-      ## assume uncertainty to be 
-      ## (before v0.1.5: the largest uncertainty of given gap-filled records.)
-      ## the mean of the given multiplicative standard deviation
       #max(sigma)
       log(mean(exp(sigma), na.rm = TRUE))
     } else {
@@ -55,44 +69,42 @@ estimateSumLognormalSample <- function(
       mu, sigma = sigma, sigmaSum = sigmaSum, effAcf = effAcf, na.rm = na.rm)
     return(c(p , nEff = nEff))
   }
-  ##value<< numeric vector with components \code{mu}, \code{sigma}, 
-  ## and \code{nEff},
-  ## the parameters of the lognormal distribution at log scale
-  ## (Result of \code{link{estimateSumLognormal}})
-  ## and the number of effective observations.
   p <- estimateSumLognormal( mu, sigma, effAcf = effAcf, na.rm = na.rm)
   return(c(p , nEff = nEff))
 }
 
 
+#' @describeIn estimateSumLognormalSample
+#'  Estimate the parameters of the lognormal approximation to the sum
+#' @param corr numeric matrix of correlations between the random variables
+#' @param sigmaSum numeric scalar: possibility to specify
+## of a precomputed scale parameter
+#' @param corrLength integer 
+#' scalar: set correlation length to smaller values
+#' to speed up computation by neglecting correlations among terms
+#' further apart.
+#' Set to zero to omit correlations.
+#' @param isStopOnNoTerm if no finite estimate is provided then by
+#' default NA is returned for the sum.
+#' Set this to TRUE to issue an error instead.
+#' @param effAcf numeric vector of effective autocorrelation
+#' This overrides arguments \code{corr} and \code{corrLength}
+#'
+#' @references \code{Lo C (2013) WKB approximation for the sum of two 
+#' correlated lognormal random variables.
+#' Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
+#' 10.12988/ams.2013.39511}
+#' 
 #' @export
+#' @exampleFunction examle_estimateSumLognormal
 estimateSumLognormal <- function(
-  ### Estimate the distribution parameters of the lognormal approximation to the sum
-  mu       ##<< numeric vector of center parameters of terms at log scale
-  , sigma  ##<< numeric vector of variance parameter of terms at log scale
-  , corr = Diagonal(length(mu)) ##<< numeric matrix 
-  ## of correlations between the random variables
-  , sigmaSum = numeric(0) ##<< numeric scalar: possibility to specify
-  ## of a precomputed scale parameter
-  , corrLength = if (inherits(corr, "ddiMatrix")) 0 else nTerm  ##<< integer 
-  ## scalar: set correlation length to smaller values
-  ## to speed up computation by neglecting correlations among terms
-  ## further apart.
-  ## Set to zero to omit correlations.
-  , isStopOnNoTerm = FALSE ##<< if no finite estimate is provided then by
-  ## default NA is returned for the sum.
-  ## Set this to TRUE to issue an error instead.
-  , effAcf                 ##<< numeric vector of effective autocorrelation
-  ## This overrides arguments \code{corr} and \code{corrLength}
-  , na.rm = isStopOnNoTerm ##<< if there are terms with NA values in mu or sigma
-  ## by default also the sum coefficients are NA. Set to TRUE to 
-  ## neglect such terms in the sum.
+  mu, sigma, effAcf = c()                
+  , corr = Diagonal(length(mu)) 
+  , corrLength = if (inherits(corr, "ddiMatrix")) 0 else nTerm  
+  , sigmaSum = numeric(0) 
+  , isStopOnNoTerm = FALSE 
+  , na.rm = isStopOnNoTerm 
 ){
-  ##references<< 
-  ## \code{Lo C (2013) WKB approximation for the sum of two correlated lognormal 
-  ## random variables.
-  ## Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
-  ## 10.12988/ams.2013.39511}
   lengthMu <- length(mu)
   if (length(sigma) == 1) sigma <- rep(sigma, lengthMu)
   iFinite <- which( is.finite(mu) & is.finite(sigma))
@@ -139,19 +151,19 @@ estimateSumLognormal <- function(
     sum(ansi)/Ssum^2
   }
   muSum = log(Ssum) - sigma2Eff/2
-  ##value<< numeric vector with two components mu and sigma
-  ## the parameters of the lognormal distribution at log scale
   return(c(mu = as.vector(muSum), sigma = as.vector(sqrt(sigma2Eff))))
 }
-attr(estimateSumLognormal,"ex") <- function(){
+examle_estimateSumLognormal <- function(){
   # distribution of the sum of two lognormally distributed random variables
   mu1 = log(110)
   mu2 = log(100)
   sigma1 = log(1.2)
   sigma2 = log(1.6)
-  (coefSum <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
+  (coefSum <- estimateSumLognormal( 
+    c(mu1,mu2), c(sigma1,sigma2) ))
   # repeat with correlation
-  (coefSumCor <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
+  (coefSumCor <- estimateSumLognormal( 
+    c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
   # expected value is equal, but variance with correlated variables is larger
   getLognormMoments(coefSum["mu"],coefSum["sigma"])
   getLognormMoments(coefSumCor["mu"],coefSumCor["sigma"])
@@ -192,8 +204,6 @@ estimateSumLognormalBenchmark <- function(
   # for performance reasons take out Ssum of the sum
   #sigma2Eff <- sum(ansi)/(nTerm*Ssum)^2
   muSum = log(Ssum) + sigma2Eff/2
-  ##value<< numeric vector with two components mu and sigma
-  ## the parameters of the lognormal distribution at log scale
   return(c(mu = muSum, sigma = sqrt(sigma2Eff)))
 }
 

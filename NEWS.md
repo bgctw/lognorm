@@ -1,3 +1,10 @@
+# lognorm 0.1.7
+
+- rewrite documentation using roxygen2 instead of inlinedocs
+- getParmsLognormForLowerAndUpper: remove argument isTransScale and provide
+  new function getParmsLognormForLowerAndUpperLog instead
+- merge vignette aggregateCorrelated to vignette lognormalSum
+
 # lognorm 0.1.6
 fix for CRAN: reformat (html-escape) doi in DESCRIPTION
 

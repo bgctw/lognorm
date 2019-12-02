@@ -1,5 +1,5 @@
 ---
-title: Using the logitnorm package
+title: Using the lognorm package
 output: 
   rmarkdown::html_vignette: 
     keep_md: true

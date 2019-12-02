@@ -1,3 +1,7 @@
+.tmp.f <- function(){
+  require(testthat)
+}
+
 context("getParmsLognormForMedianAndUpper")
 
 test_that("getParmsLognormForMedianAndUpper",{
@@ -45,6 +49,7 @@ test_that("getParmsLognormForModeAndUpper",{
 })
 
 test_that("getParmsLognormForMeanAndUpper",{
+  #trace(getParmsLognormForMeanAndUpper, recover) # untrace(getParmsLognormForMeanAndUpper)
   thetaEst <- getParmsLognormForMeanAndUpper(1,5)
   mean <- exp(thetaEst[1] + thetaEst[2]^2/2)
   expect_equal(mean , 1, check.attributes = FALSE)
