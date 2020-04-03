@@ -122,8 +122,11 @@ example_getParmsLognormForModeAndUpper <- function(){
 
 #' @describeIn getParmsLognormForModeAndUpper 
 #'   Calculate mu and sigma from moments (mean anc variance)
+#'
+#' @param mean expected value at original scale
 #' @param var variance at original scale
 #' @param sigmaOrig standard deviation at original scale 
+#'
 #' @references \code{Limpert E, Stahel W & Abbt M (2001)
 #' Log-normal Distributions across the Sciences: Keys and Clues.
 #' Oxford University Press (OUP) 51, 341,

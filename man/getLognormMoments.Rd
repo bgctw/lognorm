@@ -6,7 +6,7 @@
 \alias{getLognormMode}
 \title{Compute summary statistics of a log-normal distribution}
 \usage{
-getLognormMoments(mu, sigma)
+getLognormMoments(mu, sigma, m = exp(mu + sigma2/2))
 
 getLognormMedian(mu, sigma)
 
@@ -16,6 +16,8 @@ getLognormMode(mu, sigma)
 \item{mu}{numeric vector: location parameter}
 
 \item{sigma}{numeric vector: scale parameter}
+
+\item{m}{mean at original scale, may override default based on mu}
 }
 \value{
 for \code{getLognormMoments} a numeric matrix with columns
@@ -48,10 +50,14 @@ Compute summary statistics of a log-normal distribution
   #
   getLognormMedian(mu = log(1), sigma = log(2))
   getLognormMode(mu = log(1), sigma = c(log(1.2),log(2)))
+
 }
 \references{
 \code{Limpert E, Stahel W & Abbt M (2001)
 Log-normal Distributions across the Sciences: Keys and Clues.
 Oxford University Press (OUP) 51, 341,
 10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}
+}
+\seealso{
+scaleLogToOrig
 }
