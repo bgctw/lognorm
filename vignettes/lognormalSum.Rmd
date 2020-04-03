@@ -52,7 +52,7 @@ sigma2 = 0.15
 
 A check by random numbers shows close correspondence.
 
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{r densitySumTwo, echo=FALSE, fig.height=2.04, fig.width=3.27}
 nSample = 2000
 ds <- data.frame(
   x1 = rlnorm(nSample, mu1, sigma1)
@@ -83,6 +83,10 @@ with mean 10 and multiplicative standard deviation
 of 1.7.
 
 ```{r}
+if (!requireNamespace("mvtnorm")) {
+  warning("Remainder of the vignette required mvtnorm installed.")
+  knitr::opts_chunk$set(error = TRUE) 
+}
 nObs <- 100; nRep <- 10000
 #nObs <- 1000; nRep <- 100
 xTrue <- rep(10, nObs)
@@ -98,7 +102,7 @@ xObsN <- exp(mvtnorm::rmvnorm(
 ```
 
 A single draw of the autocorrelated 100 variables looks like the following.
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{r draw100, echo=FALSE, fig.height=2.04, fig.width=3.27}
 ds <- tibble(i = 1:nObs, xTrue, xObs = xObsN[1,], xErr =  xObs - xTrue)
 summary(rowSums(xObsN))
 ggplot( ds, aes(i, xObs)) +
@@ -144,7 +148,7 @@ Its expected value corresponds to the expected value (100*10).
 The lognormal approximation of the distribution of the sum, is close to the
 distribution of the 10000 repetitions.
 
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{r pdfSum100, echo=FALSE, fig.height=2.04, fig.width=3.27}
 dsPredSum <- data.frame(
   p = seq(0, 1, length.out = 100)[-c(1,100)] # percentiles
 ) %>%
@@ -172,7 +176,7 @@ subtracting $log(n)$ at log-scale.
 ```
 
 And we can plot the estimated distribution of the mean.
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{r pdfMean, echo=FALSE, fig.height=2.04, fig.width=3.27}
 dsPredMean <- data.frame(
   p = seq(0, 1, length.out = 100)[-c(1,100)] # percentiles
 ) %>%
