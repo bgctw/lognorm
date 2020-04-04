@@ -2,6 +2,7 @@
 % Please edit documentation in R/lognormalSum.R
 \name{estimateSumLognormalSample}
 \alias{estimateSumLognormalSample}
+\alias{estimateSumLognormalSampleExpScale}
 \alias{estimateSumLognormal}
 \title{Estimate the parameters of the lognormal approximation to the sum}
 \usage{
@@ -13,6 +14,8 @@ estimateSumLognormalSample(
   isGapFilled = logical(0),
   na.rm = TRUE
 )
+
+estimateSumLognormalSampleExpScale(mean, sigmaOrig, ...)
 
 estimateSumLognormal(
   mu,
@@ -41,6 +44,12 @@ rather than an original measurement, see details}
 
 \item{na.rm}{neglect terms with NA values in mu or sigma}
 
+\item{mean}{numeric vector of expected values}
+
+\item{sigmaOrig}{numeric vector of standard deviation at original scale}
+
+\item{...}{further arguments passed to \code{estimateSumLognormalSample}}
+
 \item{corr}{numeric matrix of correlations between the random variables}
 
 \item{corrLength}{integer 
@@ -63,6 +72,8 @@ and the number of effective observations.
 }
 \description{
 Estimate the parameters of the lognormal approximation to the sum
+
+Estimate the parameters of the lognormal approximation to the sum
 }
 \details{
 If there are no gap-filled values, i.e. \code{all(!isGapFilled)} or
@@ -83,6 +94,10 @@ the mean of the given multiplicative standard deviation
 \item \code{estimateSumLognormalSample}: In addition to \code{estimateSumLognormal} take care of missing values
 and estimate correlation terms.
 
+\item \code{estimateSumLognormalSampleExpScale}: Before calling \code{estimateSumLognormalSample} estimate
+lognormal parameters from value and its uncertainty given
+on original scale.
+
 \item \code{estimateSumLognormal}: Estimate the parameters of the lognormal approximation to the sum
 }}
 
@@ -93,10 +108,10 @@ and estimate correlation terms.
   sigma1 = log(1.2)
   sigma2 = log(1.6)
   (coefSum <- estimateSumLognormal( 
-    c(mu1,mu2), c(sigma1,sigma2) ))
+  c(mu1,mu2), c(sigma1,sigma2) ))
   # repeat with correlation
   (coefSumCor <- estimateSumLognormal( 
-    c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
+  c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
   # expected value is equal, but variance with correlated variables is larger
   getLognormMoments(coefSum["mu"],coefSum["sigma"])
   getLognormMoments(coefSumCor["mu"],coefSumCor["sigma"])

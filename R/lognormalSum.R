@@ -73,6 +73,20 @@ estimateSumLognormalSample <- function(
   return(c(p , nEff = nEff))
 }
 
+#' Estimate the parameters of the lognormal approximation to the sum 
+#'
+#' @describeIn estimateSumLognormalSample
+#'   Before calling \code{estimateSumLognormalSample} estimate
+#'   lognormal parameters from value and its uncertainty given
+#'   on original scale.
+#' @param mean numeric vector of expected values
+#' @param sigmaOrig numeric vector of standard deviation at original scale
+#' @param ... further arguments passed to \code{estimateSumLognormalSample}
+#' @export
+estimateSumLognormalSampleExpScale <- function(mean, sigmaOrig, ...){
+  parlog <- getParmsLognormForMoments(mean, sigmaOrig = sigmaOrig)
+  estimateSumLognormalSample( parlog[,"mu"], parlog[,"sigma"], ...)
+}  
 
 #' @describeIn estimateSumLognormalSample
 #'  Estimate the parameters of the lognormal approximation to the sum
@@ -94,9 +108,21 @@ estimateSumLognormalSample <- function(
 #' correlated lognormal random variables.
 #' Applied Mathematical Sciences, Hikari, Ltd., 7 , 6355-6367 
 #' 10.12988/ams.2013.39511}
-#' 
 #' @export
-#' @exampleFunction examle_estimateSumLognormal
+#' @examples
+#'   # distribution of the sum of two lognormally distributed random variables
+#'   mu1 = log(110)
+#'   mu2 = log(100)
+#'   sigma1 = log(1.2)
+#'   sigma2 = log(1.6)
+#'   (coefSum <- estimateSumLognormal( 
+#'   c(mu1,mu2), c(sigma1,sigma2) ))
+#'   # repeat with correlation
+#'   (coefSumCor <- estimateSumLognormal( 
+#'   c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
+#'   # expected value is equal, but variance with correlated variables is larger
+#'   getLognormMoments(coefSum["mu"],coefSum["sigma"])
+#'   getLognormMoments(coefSumCor["mu"],coefSumCor["sigma"])
 estimateSumLognormal <- function(
   mu, sigma, effAcf = c()                
   , corr = Diagonal(length(mu)) 
@@ -127,7 +153,7 @@ estimateSumLognormal <- function(
   } 
   corrFin <- corr[iFinite,iFinite]
   #S = exp(muFin) 
-  # S dentoes the expected value, not mu in Lo13
+  # S denotes the expected value, not mu in Lo13
   S = exp(muFin + sigmaFin*sigmaFin/2) 
   Ssum = sum(S)
   sigma2Eff <- if (length(sigmaSum)) {
@@ -152,21 +178,6 @@ estimateSumLognormal <- function(
   }
   muSum = log(Ssum) - sigma2Eff/2
   return(c(mu = as.vector(muSum), sigma = as.vector(sqrt(sigma2Eff))))
-}
-examle_estimateSumLognormal <- function(){
-  # distribution of the sum of two lognormally distributed random variables
-  mu1 = log(110)
-  mu2 = log(100)
-  sigma1 = log(1.2)
-  sigma2 = log(1.6)
-  (coefSum <- estimateSumLognormal( 
-    c(mu1,mu2), c(sigma1,sigma2) ))
-  # repeat with correlation
-  (coefSumCor <- estimateSumLognormal( 
-    c(mu1,mu2), c(sigma1,sigma2), effAcf = c(1,0.9) ))
-  # expected value is equal, but variance with correlated variables is larger
-  getLognormMoments(coefSum["mu"],coefSum["sigma"])
-  getLognormMoments(coefSumCor["mu"],coefSumCor["sigma"])
 }
 
 
