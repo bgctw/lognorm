@@ -70,6 +70,39 @@ test_that("getParmsLognormForMeanAndUpper",{
   expect_equal(res[3,,drop = FALSE], theta)
 })
 
+test_that("estimateStdErrParms",{
+  meanx <- 2
+  relerr <- c(0.5)
+  pS <- getParmsLognormForMoments(meanx, sigmaOrig = meanx*relerr)
+  exp(pS)
+  n <- 512
+  n <- 32
+  nrep <- 4048*64
+  nrep <- 4048
+  mx_boot = purrr::map_dbl(seq_len(nrep), function(i){
+    x <- exp(rnorm(n, mean = pS[1,"mu"], sd = pS[1,"sigma"]))
+    #plot(density(x))
+    #estimateParmsLognormFromSample(x)
+    mean(x)
+  })
+  x <- exp(rnorm(n, mean = pS[1,"mu"], sd = pS[1,"sigma"]))
+  sdm <- sd(mx_boot)
+  ans <- estimateStdErrParms(x)
+  xo <- scaleLogToOrig(ans["mu"], ans["sigma"])
+  .tmp.f <- function(){
+    exp(ans)
+    xbounds <- exp(qnorm(c(0.025, 0.975), ans["mu"], ans["sigma"]))
+    xgrid <- seq(xbounds[1]*0.9, xbounds[2]*1.1, length.out = 300)
+    dans <- dnorm(log(xgrid-(meanx - mean(x))), ans["mu"], ans["sigma"])/mean(x)
+    dansN <- dnorm(xgrid-(meanx - mean(x)), mean(x), sd(x)/sqrt(n-1))
+    plot(density(mx_boot)); lines(dans ~ xgrid, col = "blue"); lines(dansN ~ xgrid, col = "orange"); abline(v=meanx)
+  }
+  expect_equivalent(mean(x), xo[1,"mean"], 0.2/sqrt(n), scale = 1 )
+  expect_equivalent(sdm, xo[1,"sd"], 0.5/sqrt(n), scale = 1)
+  # 
+})
+
+
 
 
 

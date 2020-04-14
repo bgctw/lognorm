@@ -1,6 +1,37 @@
 Approximating the sum of lognormal random variables
 ===================================================
 
+Lo 2013 derived the following formula for the approximation of the sum
+of several correlated lognormal random variables by a lognormal
+distribution.
+$$
+    \\begin{align}
+        S\_+ &= \\operatorname{E}\\left\[\\sum\_i X\_i \\right\] = \\sum\_i 
+        \\operatorname{E}\[X\_i\] = 
+        \\sum\_i 
+        e^{\\mu\_i + \\sigma\_i^2/2}        \\\\
+        \\sigma^2\_{S} &= 1/S\_+^2 \\, \\sum\_{i,j}
+        \\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   \\operatorname{E}\[X\_i\] 
+        \\operatorname{E}\[X\_j\]       \\\\ 
+         &= 1/S\_+^2 \\, \\sum\_{i,j}
+        \\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   e^{\\mu\_i + \\sigma\_i^2/2} 
+        e^{\\mu\_j + \\sigma\_j^2/2}  \\\\
+        \\mu\_S &= \\ln\\left( S\_+ \\right) - \\sigma\_{S}^2/2 
+    \\end{align}
+$$
+ where *S*<sub>+</sub> is the expected value of the sum, i.e the sum of
+the expected values of the terms. *μ*<sub>*s*</sub> and
+*σ*<sub>*S*</sub> are lognormal distribution parameters of the sum,
+*μ*<sub>*i*</sub> and *σ*<sub>*i*</sub> are the lognormal distribution
+parameters of the added random variables, and cor<sub>*i**j*</sub> is
+the correlation between two added random variables at log scale, which
+for time is computed from estimated autocorrelation *ρ*<sub>*k*</sub>.
+
+This method is implemented with function `estimateSumLognormal`, where
+the full correlation matrix is specified. For computational efficiency,
+the correlation length can be specified and correlations further apart
+will not contribute to the sum.
+
 Two uncorrelated random variables
 ---------------------------------
 
@@ -45,13 +76,12 @@ mean 10 and multiplicative standard deviation of 1.7.
 
 A single draw of the autocorrelated 100 variables looks like the
 following.
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   733.4   945.9   997.3  1000.3  1051.5  1349.6
-
 <img src="lognormalSum_files/figure-markdown_strict/draw100-1.png" style="display:block; margin: auto" />
 
 ### Estimating the correlation matrix and effective number of parameters
+
+We can estimate the autocorrelation matrix by assuming that it depends
+only on the distance in time, and estimate the autocorrelation matrix.
 
 The original autocorrelation function used to generate the sample was:
 
@@ -61,11 +91,11 @@ The effective autocorrelation function estimated from the sample is:
 
     (effAcf <- computeEffectiveAutoCorr(ds$xErr))
 
-    ## [1] 1.0000000 0.4943576 0.1562647
+    ## [1] 1.00000000 0.36277576 0.08160413
 
     (nEff <- computeEffectiveNumObs(ds$xErr))
 
-    ## [1] 43.76163
+    ## [1] 53.24133
 
 Due to autocorrelation, the effective number of parameters is less than
 nObs = 100.
@@ -82,7 +112,7 @@ variables. The multiplicative uncertainty has decreased from 1.7.
     ## sigmaStar 
     ##  1.077687
 
-Its expected value corresponds to the expected value (100\*10).
+Its expected value corresponds to the summ of expected values (100\*10).
 
     (sumExp <- getLognormMoments( coefSum[1], coefSum[2])[1,"mean"])
 
@@ -93,12 +123,13 @@ The lognormal approximation of the distribution of the sum, is close to
 the distribution of the 10000 repetitions.
 
 <img src="lognormalSum_files/figure-markdown_strict/pdfSum100-1.png" style="display:block; margin: auto" />
+
 The mean is the sum devided by the number of observations, *n*. While
 the multiplicatie standard deviation does not change by this operation,
 the location parameter is obtained by deviding by *n* at original scale,
 hence, subtracting *l**o**g*(*n*) at log-scale.
 
-    (coefMean <- setNames(c(coefSum["mu"] - log(nObs),coefSum["sigma"]), c("mu","sigma")))
+    (coefMean <- setNames(c(coefSum["mu"] - log(nObs), coefSum["sigma"]), c("mu","sigma")))
 
     ##        mu     sigma 
     ## 2.2997863 0.0748167

@@ -58,7 +58,8 @@ to speed up computation by neglecting correlations among terms
 further apart.
 Set to zero to omit correlations.}
 
-\item{sigmaSum}{numeric scalar: possibility to specify}
+\item{sigmaSum}{numeric scalar: possibility to specify
+a precomputed scale parameter instead of computing it.}
 
 \item{isStopOnNoTerm}{if no finite estimate is provided then by
 default NA is returned for the sum.

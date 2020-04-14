@@ -40,6 +40,37 @@ themeTw <- theme_bw(base_size = 10) +
 
 # Approximating the sum of lognormal random variables
 
+Lo 2013 derived the following formula for the approximation of the sum of
+several correlated lognormal random variables by a lognormal distribution.
+$$
+\begin{aligned}
+S_+ &= \operatorname{E}\left[\sum_i X_i \right] = \sum_i 
+\operatorname{E}[X_i] = 
+\sum_i 
+e^{\mu_i + \sigma_i^2/2}		\\
+\sigma^2_{S} &= 1/S_+^2 \, \sum_{i,j}
+\operatorname{cor}_{ij} \sigma_i \sigma_j 	\operatorname{E}[X_i] 
+\operatorname{E}[X_j] 		\\ 
+ &= 1/S_+^2 \, \sum_{i,j}
+\operatorname{cor}_{ij} \sigma_i \sigma_j 	e^{\mu_i + \sigma_i^2/2} 
+e^{\mu_j + \sigma_j^2/2}  \\
+\mu_S &= \ln\left( S_+ \right) - \sigma_{S}^2/2 
+\end{aligned}
+$$
+where $S_+$ is the expected value of the sum, i.e the sum of the expected 
+values of the terms.
+$\mu_s$ and $\sigma_S$ are lognormal distribution
+parameters of the sum, $\mu_i$ and $\sigma_i$ are the lognormal
+distribution parameters of the added random variables, and 
+$\operatorname{cor}_{ij}$ is the
+correlation between two added random variables at log scale, 
+which for time is computed from estimated autocorrelation $\rho_k$.
+
+This method is implemented with function `estimateSumLognormal`, where 
+the full correlation matrix is specified. For computational efficiency,
+the correlation length can be specified and correlations further apart
+will not contribute to the sum.
+
 ## Two uncorrelated random variables
 ```{r}
 # generate nSample values of two lognormal random variables
@@ -104,7 +135,6 @@ xObsN <- exp(mvtnorm::rmvnorm(
 A single draw of the autocorrelated 100 variables looks like the following.
 ```{r draw100, echo=FALSE, fig.height=2.04, fig.width=3.27}
 ds <- tibble(i = 1:nObs, xTrue, xObs = xObsN[1,], xErr =  xObs - xTrue)
-summary(rowSums(xObsN))
 ggplot( ds, aes(i, xObs)) +
   geom_line() +
   geom_hline(yintercept = xTrue[1]) +
@@ -113,6 +143,9 @@ ggplot( ds, aes(i, xObs)) +
 ```
 
 ### Estimating the correlation matrix and effective number of parameters
+
+We can estimate the autocorrelation matrix by assuming that it depends
+only on the distance in time, and estimate the autocorrelation matrix.
 
 The original autocorrelation function used to generate the sample was:
 ```{r echo=FALSE}
@@ -139,7 +172,7 @@ coefSum <- estimateSumLognormal( theta[,1], theta[,2], effAcf = c(1,acf1) )
 setNames(exp(coefSum["sigma"]), "sigmaStar")
 ```
 
-Its expected value corresponds to the expected value (100*10).
+Its expected value corresponds to the summ of expected values (100*10).
 
 ```{r}
 (sumExp <- getLognormMoments( coefSum[1], coefSum[2])[1,"mean"])
@@ -167,12 +200,13 @@ theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank()) +
 theme(legend.title = element_blank())
 ```
+
 The mean is the sum devided by the number of observations, $n$.
 While the multiplicatie standard deviation does not change by this operation,
 the location parameter is obtained by deviding by $n$ at original scale, hence,
 subtracting $log(n)$ at log-scale.
 ```{r}
-(coefMean <- setNames(c(coefSum["mu"] - log(nObs),coefSum["sigma"]), c("mu","sigma")))
+(coefMean <- setNames(c(coefSum["mu"] - log(nObs), coefSum["sigma"]), c("mu","sigma")))
 ```
 
 And we can plot the estimated distribution of the mean.

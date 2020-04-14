@@ -162,7 +162,11 @@ example_getParmsLognormForExpval <- function(){
   cbind(exp(parms[,"sigma"]), .sigmaStar)
 }
 
+
 #' Estimate lognormal distribution parameters from a sample
+#'
+#' @describeIn estimateParmsLognormFromSample 
+#'    Estimate lognormal distribution parameters from a sample
 #'
 #' @param x numeric vector of sampled values
 #' @param na.rm a logical value indicating whether 
@@ -172,16 +176,39 @@ example_getParmsLognormForExpval <- function(){
 #' ie.., the center parameter (mean at log scale, log(median)) and 
 #' the scale parameter (standard deviation at log scale)
 #' 
+#' @example 
+#' .mu <- log(1)
+#' .sigma <- log(2)
+#' x <- exp(rnorm(50, mean = .mu, sd = .sigma))
+#' exp(pL <- estimateParmsLognormFromSample(x))
+#' c(mean(x), meanx <- getLognormMoments(pL["mu"],pL["sigma"])[,"mean"])
+#' 
+#' # multiplicative stddev for the mean decreases from 2 to 1.1
+#' # but expected value stays the same
+#' exp(se <- estimateStdErrParms(x)) 
+#' c(meanx, getLognormMoments(se["mu"],se["sigma"])[,"mean"])
 #' @export
 estimateParmsLognormFromSample <- function(x, na.rm = FALSE){
   logx <- log(x)
   c(mu = mean(logx, na.rm = na.rm) ,sigma = sd(logx, na.rm = na.rm))
 }
-example_estimateParmsLognormFromSample <- function(){
-  .mu <- log(1)
-  .sigma <- log(2)
-  x <- exp(rnorm(50, mean = .mu, sd = .sigma))
-  estimateParmsLognormFromSample(x)
+
+#' @describeIn estimateParmsLognormFromSample 
+#'    Estimate lognormal distribution parameters of the mean from a sample
+#' @details The expected value of a can be determined with
+#'   higher accuracy the larger the sample. Here, the uncorrelated
+#'   assumption is applied at the log scale and distribution parameters
+#'   are returned with the same expected value as the sample, but with
+#'   uncertainty (sigma) decreased by sqrt(nfin - 1). 
+#' 
+#' @export
+estimateStdErrParms <- function(x, na.rm = FALSE){
+  pl <- estimateParmsLognormFromSample(x = x, na.rm = na.rm)
+  sigma <- pl["sigma"]
+  logmean <- pl["mu"] + sigma^2/2
+  nfin <- sum(is.finite(x))
+  sdmean <- sigma / sqrt(nfin - 1)
+  setNames(c(logmean - sdmean^2/2, sdmean),c("mu","sigma"))
 }
 
 
