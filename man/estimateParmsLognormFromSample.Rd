@@ -2,9 +2,12 @@
 % Please edit documentation in R/coefLognorm.R
 \name{estimateParmsLognormFromSample}
 \alias{estimateParmsLognormFromSample}
+\alias{estimateStdErrParms}
 \title{Estimate lognormal distribution parameters from a sample}
 \usage{
 estimateParmsLognormFromSample(x, na.rm = FALSE)
+
+estimateStdErrParms(x, na.rm = FALSE)
 }
 \arguments{
 \item{x}{numeric vector of sampled values}
@@ -20,3 +23,17 @@ the scale parameter (standard deviation at log scale)
 \description{
 Estimate lognormal distribution parameters from a sample
 }
+\details{
+The expected value of a can be determined with
+  higher accuracy the larger the sample. Here, the uncorrelated
+  assumption is applied at the log scale and distribution parameters
+  are returned with the same expected value as the sample, but with
+  uncertainty (sigma) decreased by sqrt(nfin - 1).
+}
+\section{Functions}{
+\itemize{
+\item \code{estimateParmsLognormFromSample}: Estimate lognormal distribution parameters from a sample
+
+\item \code{estimateStdErrParms}: Estimate lognormal distribution parameters of the mean from a sample
+}}
+

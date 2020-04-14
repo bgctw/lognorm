@@ -42,6 +42,19 @@ getLognormMoments <- function(mu,sigma, m = exp(mu + sigma2/2)){
   )
 }
 
+
+#' @describeIn getLognormMoments
+#' get the median
+#' @export
+getLognormMedian <- function(mu, sigma) exp(mu)
+
+#' @describeIn getLognormMoments
+#' get the mode
+#' @export
+getLognormMode <- function(mu,sigma) exp(mu - sigma*sigma)
+
+
+
 #' Scale standard deviation between log and original scale.
 #'
 #' When comparing values at log scale that have different sd at original scale, 
@@ -79,12 +92,4 @@ scaleOrigToLog <- function(mean, sd){
   ans
 }
 
-#' @describeIn getLognormMoments
-#' get the median
-#' @export
-getLognormMedian <- function(mu, sigma) exp(mu)
 
-#' @describeIn getLognormMoments
-#' get the mode
-#' @export
-getLognormMode <- function(mu,sigma) exp(mu - sigma*sigma)
