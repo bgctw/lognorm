@@ -61,7 +61,8 @@ getLognormMoments <- function(mu,sigma, m = exp(mu + sigma2/2)){
 #'   all.equal(xLog$sigma, xLog3$sigma) # but mu  < logmean 
 #' @export
 scaleLogToOrig <- function(logmean, sigma){
-  ans <- moments <- getLognormMoments(sigma = sigma, m = exp(logmean))[,1:2]
+  ans <- moments <- getLognormMoments(sigma = sigma, 
+                                      m = exp(logmean))[,1:2, drop = FALSE]
   colnames(ans) <- c("mean","sd")
   ans[,"sd"] <- sqrt(moments[,"var"])
   ans

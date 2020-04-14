@@ -92,7 +92,7 @@ estimateSumLognormalSampleExpScale <- function(mean, sigmaOrig, ...){
 #'  Estimate the parameters of the lognormal approximation to the sum
 #' @param corr numeric matrix of correlations between the random variables
 #' @param sigmaSum numeric scalar: possibility to specify
-## of a precomputed scale parameter
+#' a precomputed scale parameter instead of computing it.
 #' @param corrLength integer 
 #' scalar: set correlation length to smaller values
 #' to speed up computation by neglecting correlations among terms

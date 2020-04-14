@@ -136,7 +136,9 @@ getParmsLognormForMoments <- function(mean, var, sigmaOrig = sqrt(var)){
   omega = 1 + (sigmaOrig/mean)^2
   mu = log(mean / sqrt(omega))
   sigma = sqrt(log(omega))
-  cbind(mu,sigma)
+  ans <- cbind(mu,sigma)
+  rownames(ans) <- NULL # sometimes strange rownames by cbind
+  ans
 }
 
 

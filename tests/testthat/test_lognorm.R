@@ -41,4 +41,23 @@ test_that("getLognormMode",{
   expect_equal( exp(mu - sigma^2), mode)
 })
 
+test_that("scaleLogToOrig vector",{
+  xLog <- data.frame(logmean = c(0.8, 0.8), sigma = c(0.2, 0.3))
+  xOrig <- as.data.frame(scaleLogToOrig(xLog$logmean, xLog$sigma))
+  xLog2 <- as.data.frame(scaleOrigToLog(xOrig$mean, xOrig$sd))
+  expect_true( all.equal(xLog, xLog2) )
+  xLog3 <- as.data.frame(getParmsLognormForMoments(xOrig$mean, xOrig$sd^2))
+  expect_true( all.equal(xLog$sigma, xLog3$sigma) )
+})
+
+test_that("scaleLogToOrig scalar",{
+  xLog <- data.frame(logmean = c(0.8), sigma = c(0.2))
+  xOrig <- scaleLogToOrig(xLog$logmean, xLog$sigma)
+  expect_equal(dim(xOrig), c(1,2))
+  xLog2 <- scaleOrigToLog(xOrig[,"mean"], xOrig[,"sd"])
+  expect_true( all.equal(xLog, as.data.frame(xLog2)) )
+})
+
+
+
 
