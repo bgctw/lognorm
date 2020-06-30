@@ -1,6 +1,6 @@
 Package: lognorm
 Title: Functions for the Lognormal Distribution
-Version: 0.1.7
+Version: 0.1.8
 Author: Thomas Wutzler
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: The lognormal distribution  

@@ -1,3 +1,11 @@
+# lognorm 0.1.8
+- Implement the Lo 2012 approximation of the distribution of the difference of
+  two lognormally distributed random variables by a shifted lognormal 
+  distribution.
+- Add Formulas to vignette of lognormalSum  
+- Add shift argument to moments, mode, and median to deal with shifted
+  lognormal distribution.
+
 # lognorm 0.1.7
 
 - rewrite documentation using roxygen2 instead of inlinedocs
