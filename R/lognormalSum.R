@@ -163,7 +163,7 @@ estimateSumLognormal <- function(
       sumDiag <- sum(sigmaFin*sigmaFin*S*S)/Ssum^2
   } else {
     jStarts <- pmax(1, (1:nTerm) - corrLength)
-    jEnds <- pmin(nTerm, (1:nTerm) + corrLength)
+      jEnds <- pmin(nTerm, (1:nTerm) + corrLength)
     ansi = sapply(1:nTerm, function(i){
       j <- jStarts[i]:jEnds[i]
       ansj <- corrFin[i,j]*sigmaFin[i]*sigmaFin[j]*S[i]*S[j]  #Ssum outside loop

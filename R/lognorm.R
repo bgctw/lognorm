@@ -6,6 +6,7 @@
 #' @param mu numeric vector: location parameter
 #' @param sigma numeric vector: scale parameter
 #' @param m mean at original scale, may override default based on mu
+#' @param shift shift for the shifted lognormal distribution
 #'
 #' @return for \code{getLognormMoments} a numeric matrix with columns
 #' \code{mean} (expected value at original scale)
@@ -32,9 +33,9 @@
 #' 10.1641/0006-3568(2001)051[0341:lndats]2.0.co;2}
 #' @seealso scaleLogToOrig
 #' @export
-getLognormMoments <- function(mu,sigma, m = exp(mu + sigma2/2)){
+getLognormMoments <- function(mu,sigma, m = exp(mu + sigma2/2) - shift, shift = 0){
   sigma2 <- sigma*sigma
-  v = (exp(sigma2) - 1)*m^2
+  v = (exp(sigma2) - 1)*(m + shift)^2
   cbind(
     mean = as.vector(m)              ##<< expected value at original scale
     , var = as.vector(v)             ##<< variance at original scale
@@ -46,12 +47,12 @@ getLognormMoments <- function(mu,sigma, m = exp(mu + sigma2/2)){
 #' @describeIn getLognormMoments
 #' get the median
 #' @export
-getLognormMedian <- function(mu, sigma) exp(mu)
+getLognormMedian <- function(mu, sigma, shift = 0) exp(mu) - shift
 
 #' @describeIn getLognormMoments
 #' get the mode
 #' @export
-getLognormMode <- function(mu,sigma) exp(mu - sigma*sigma)
+getLognormMode <- function(mu, sigma, shift = 0) exp(mu - sigma*sigma) - shift
 
 
 

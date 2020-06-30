@@ -176,7 +176,7 @@ example_getParmsLognormForExpval <- function(){
 #' ie.., the center parameter (mean at log scale, log(median)) and 
 #' the scale parameter (standard deviation at log scale)
 #' 
-#' @example 
+#' @examples 
 #' .mu <- log(1)
 #' .sigma <- log(2)
 #' x <- exp(rnorm(50, mean = .mu, sd = .sigma))

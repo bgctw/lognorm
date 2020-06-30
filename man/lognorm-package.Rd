@@ -12,7 +12,9 @@ The lognormal distribution
   This package provides estimation of distribution parameters, computation of
   moments and other basic statistics, and an approximation of the distribution
   of the sum of several correlated lognormally distributed variables 
-  (Lo 2013 <doi:10.12988/ams.2013.39511>).
+  (Lo 2013 <doi:10.12988/ams.2013.39511>) and the approximation of the 
+  difference of two correlated lognormally distributed variables
+  (Lo 2012 <doi:10.1155/2012/838397>).
 }
 \details{
 Essential functions are 
@@ -26,6 +28,8 @@ Essential functions are
   \code{\link{estimateParmsLognormFromSample}}
 \item Approximate the sum of correlated lognormals: 
   \code{\link{estimateSumLognormalSample}}
+\item Approximate the difference of two correlated lognormals: 
+  \code{\link{estimateDiffLognormal}}
 }
 
 Utilities for correlated data. These functions maybe moved to

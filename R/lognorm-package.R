@@ -10,6 +10,8 @@
 #'   \code{\link{estimateParmsLognormFromSample}}
 #' \item Approximate the sum of correlated lognormals: 
 #'   \code{\link{estimateSumLognormalSample}}
+#' \item Approximate the difference of two correlated lognormals: 
+#'   \code{\link{estimateDiffLognormal}}
 #' }
 #' 
 #' Utilities for correlated data. These functions maybe moved to

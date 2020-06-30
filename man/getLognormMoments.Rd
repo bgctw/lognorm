@@ -6,11 +6,11 @@
 \alias{getLognormMode}
 \title{Compute summary statistics of a log-normal distribution}
 \usage{
-getLognormMoments(mu, sigma, m = exp(mu + sigma2/2))
+getLognormMoments(mu, sigma, m = exp(mu + sigma2/2) - shift, shift = 0)
 
-getLognormMedian(mu, sigma)
+getLognormMedian(mu, sigma, shift = 0)
 
-getLognormMode(mu, sigma)
+getLognormMode(mu, sigma, shift = 0)
 }
 \arguments{
 \item{mu}{numeric vector: location parameter}
@@ -18,6 +18,8 @@ getLognormMode(mu, sigma)
 \item{sigma}{numeric vector: scale parameter}
 
 \item{m}{mean at original scale, may override default based on mu}
+
+\item{shift}{shift for the shifted lognormal distribution}
 }
 \value{
 for \code{getLognormMoments} a numeric matrix with columns

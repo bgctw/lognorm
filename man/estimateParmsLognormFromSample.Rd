@@ -37,3 +37,15 @@ The expected value of a can be determined with
 \item \code{estimateStdErrParms}: Estimate lognormal distribution parameters of the mean from a sample
 }}
 
+\examples{
+.mu <- log(1)
+.sigma <- log(2)
+x <- exp(rnorm(50, mean = .mu, sd = .sigma))
+exp(pL <- estimateParmsLognormFromSample(x))
+c(mean(x), meanx <- getLognormMoments(pL["mu"],pL["sigma"])[,"mean"])
+
+# multiplicative stddev for the mean decreases from 2 to 1.1
+# but expected value stays the same
+exp(se <- estimateStdErrParms(x)) 
+c(meanx, getLognormMoments(se["mu"],se["sigma"])[,"mean"])
+}

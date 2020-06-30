@@ -2,6 +2,7 @@
 
 export(computeEffectiveAutoCorr)
 export(computeEffectiveNumObs)
+export(estimateDiffLognormal)
 export(estimateParmsLognormFromSample)
 export(estimateStdErrParms)
 export(estimateSumLognormal)

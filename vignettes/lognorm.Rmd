@@ -89,6 +89,11 @@ ans %>% ggplot(aes(x,cumDensity, linetype = sigmaStar, color = sigmaStar)) +
   theme(axis.title.x = element_blank())
 ```
 
+## Density, distribution function, quantile function and random generation
+
+Are already provided with the base stats package.
+See `?dlnorm`.
+
 ## Expected value, Variance, Mode, and Median
 
 ```{r momentsLogitnorm}

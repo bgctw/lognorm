@@ -5,19 +5,19 @@ Lo 2013 derived the following formula for the approximation of the sum
 of several correlated lognormal random variables by a lognormal
 distribution.
 $$
-    \\begin{align}
-        S\_+ &= \\operatorname{E}\\left\[\\sum\_i X\_i \\right\] = \\sum\_i 
-        \\operatorname{E}\[X\_i\] = 
-        \\sum\_i 
-        e^{\\mu\_i + \\sigma\_i^2/2}        \\\\
-        \\sigma^2\_{S} &= 1/S\_+^2 \\, \\sum\_{i,j}
-        \\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   \\operatorname{E}\[X\_i\] 
-        \\operatorname{E}\[X\_j\]       \\\\ 
-         &= 1/S\_+^2 \\, \\sum\_{i,j}
-        \\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   e^{\\mu\_i + \\sigma\_i^2/2} 
-        e^{\\mu\_j + \\sigma\_j^2/2}  \\\\
-        \\mu\_S &= \\ln\\left( S\_+ \\right) - \\sigma\_{S}^2/2 
-    \\end{align}
+\\begin{aligned}
+S\_+ &= \\operatorname{E}\\left\[\\sum\_i X\_i \\right\] = \\sum\_i 
+\\operatorname{E}\[X\_i\] = 
+\\sum\_i 
+e^{\\mu\_i + \\sigma\_i^2/2}        \\\\
+\\sigma^2\_{S} &= 1/S\_+^2 \\, \\sum\_{i,j}
+\\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   \\operatorname{E}\[X\_i\] 
+\\operatorname{E}\[X\_j\]       \\\\ 
+ &= 1/S\_+^2 \\, \\sum\_{i,j}
+\\operatorname{cor}\_{ij} \\sigma\_i \\sigma\_j   e^{\\mu\_i + \\sigma\_i^2/2} 
+e^{\\mu\_j + \\sigma\_j^2/2}  \\\\
+\\mu\_S &= \\ln\\left( S\_+ \\right) - \\sigma\_{S}^2/2 
+\\end{aligned}
 $$
  where *S*<sub>+</sub> is the expected value of the sum, i.e the sum of
 the expected values of the terms. *μ*<sub>*s*</sub> and
@@ -91,11 +91,11 @@ The effective autocorrelation function estimated from the sample is:
 
     (effAcf <- computeEffectiveAutoCorr(ds$xErr))
 
-    ## [1] 1.00000000 0.36277576 0.08160413
+    ## [1] 1.00000000 0.29142196 0.09174139
 
     (nEff <- computeEffectiveNumObs(ds$xErr))
 
-    ## [1] 53.24133
+    ## [1] 56.92075
 
 Due to autocorrelation, the effective number of parameters is less than
 nObs = 100.
