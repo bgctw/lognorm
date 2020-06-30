@@ -54,8 +54,6 @@ getLognormMedian <- function(mu, sigma, shift = 0) exp(mu) - shift
 #' @export
 getLognormMode <- function(mu, sigma, shift = 0) exp(mu - sigma*sigma) - shift
 
-
-
 #' Scale standard deviation between log and original scale.
 #'
 #' When comparing values at log scale that have different sd at original scale, 

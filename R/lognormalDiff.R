@@ -26,7 +26,7 @@ estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
   S0m = Sa - Sb
   if (S0m/S0p > 1e-2) warning(
     "Expected S0+/S0- << 1 but this ratio was ",S0m/S0p, ". The Lo 2012 ",
-    "approximation becomes inaccurate for small number a and b.")
+    "approximation becomes inaccurate for small numbers a and b.")
   shift = sigma2_m/(sigma_a^2 - sigma_b^2)*S0p
   S0mt <- S0m + shift
   if (sigma_mt > 0.2) warning(
