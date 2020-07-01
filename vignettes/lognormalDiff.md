@@ -63,7 +63,9 @@ manually.
 A check by random numbers (dotted lines) shows close correspondence.
 
 <img src="lognormalDiff_files/figure-markdown_strict/plotUncorr-1.png" style="display:block; margin: auto" />
-\#\# Test if difference is significantly different from zero
+
+Test if difference is significantly different from zero
+-------------------------------------------------------
 
 The probability of the zero quantile needs to larger than a significane
 level. We can compute it based on the lognormal approximation or by
@@ -84,7 +86,7 @@ repeatetly computing the difference from a sample of terms.
       c(pLo = as.numeric(pLo), pSample = pSample)
 
     ##        pLo    pSample 
-    ## 0.04540137 0.03404000
+    ## 0.04540137 0.03449000
 
 In the example both approaches give a probability of less than 5% so
 that we conclude that the difference is significant.
@@ -125,12 +127,12 @@ Check with sampled distribution.
     head(xObsN)
 
     ##           [,1]     [,2]
-    ## [1,] 134.20009 58.60104
-    ## [2,] 122.15192 67.27909
-    ## [3,]  95.58233 60.40380
-    ## [4,] 124.07189 63.64393
-    ## [5,] 129.83132 58.80474
-    ## [6,] 181.31042 64.63232
+    ## [1,] 129.12304 55.75530
+    ## [2,] 128.58578 73.91592
+    ## [3,] 107.37253 60.88385
+    ## [4,]  95.20953 44.34412
+    ## [5,] 118.57035 61.37689
+    ## [6,] 122.10582 69.80982
 
     y = xObsN[,1] - xObsN[,2]
 
@@ -190,3 +192,5 @@ shifted and negated distribution.
         )
 
 <img src="lognormalDiff_files/figure-markdown_strict/plotDiffLargerVar-1.png" style="display:block; margin: auto" />
+Because we subtract a large-variance lognormal variable, the
+distribution becomes right-skewed.

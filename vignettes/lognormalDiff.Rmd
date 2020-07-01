@@ -105,6 +105,7 @@ themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank())
 ```
+
 ## Test if difference is significantly different from zero
 
 The probability of the zero quantile needs to larger than a significane 
@@ -267,4 +268,6 @@ themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank())
 ```
+Because we subtract a large-variance lognormal variable, the distribution
+becomes right-skewed.
 
