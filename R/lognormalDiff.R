@@ -24,7 +24,7 @@ estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
   sigma_mt <- (sigma_a^2 - sigma_b^2)/(2*sqrt(sigma2_m))
   S0p = Sa + Sb #eq. 2.2.
   S0m = Sa - Sb
-  if (S0m/S0p > 1e-2) warning(
+  if (S0m/S0p > 0.08) warning(
     "Expected S0+/S0- << 1 but this ratio was ",S0m/S0p, ". The Lo 2012 ",
     "approximation becomes inaccurate for small numbers a and b.")
   shift = sigma2_m/(sigma_a^2 - sigma_b^2)*S0p
@@ -32,7 +32,7 @@ estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
   if (sigma_mt > 0.2) warning(
     "Expected small sigma of the shifted distribution but got ",sigma_mt,
     ". The Lo 2012 approximation becomes inaccurate for larger sigma.")
-  muSum <- log(S0mt - sigma_mt^2/2)
+  muSum <- log(S0mt) - sigma_mt^2/2
   return(c(mu = muSum, sigma = sigma_mt, shift = shift))
 }
 

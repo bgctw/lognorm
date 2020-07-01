@@ -16,10 +16,9 @@ test_that("estimateDiffLognormal two Vars",{
   sigma2 = 0.15
   #estimateSumLognormalBenchmark( c(mu1,mu2), c(sigma1,sigma2) )
   coefSum <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2 )
-  # mean is actually not fully equal here
-  # m <- getLognormMoments(coefSum["mu"], coefSum["sigma"], 
-  #                        shift = coefSum["shift"])[,"mean"]
-  # expect_equal(m, c(mean = exp(mu1 + sigma1^2/2) - exp(mu2 + sigma2^2/2)))
+  m <- getLognormMoments(coefSum["mu"], coefSum["sigma"], 
+                        shift = coefSum["shift"])[,"mean"]
+  expect_equal(m, c(mean = exp(mu1 + sigma1^2/2) - exp(mu2 + sigma2^2/2)))
   # regression test
   coefSumExp <- c(mu = 6.15, sigma = 0.069, shift = 456.07)
   expect_equal( coefSum, coefSumExp, tolerance = 0.02 )
