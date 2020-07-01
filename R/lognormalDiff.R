@@ -1,16 +1,18 @@
-#' Estimatd the shifted-lognormal approximation to difference of two lognormals
+#' Inference on the difference of two lognormals
 #' 
 #' The distribtuion of y = a - b + s, where a and b are two lognormal random
 #' variables and s is a constant to be estimated, can be approximated
 #' by a lognormal distribution.
 #' 
+#' @describeIn estimateDiffLognormal
+#'    Estimate the shifted-lognormal approximation to difference of two lognormals
 #' @param mu_a center parameter of the first term
 #' @param mu_b center parameter of the second term
 #' @param sigma_a scale parameter of the first term
 #' @param sigma_b scale parameter of the second term
 #' @param corr correlation between the two random variables
 #'
-#' @return numeric vector with components mu, sigma, and shift, the components
+#' @return estimateDiffLognormal: numeric vector with components mu, sigma, and shift, the components
 #' of the shifted lognormal distribution.
 #' @export
 estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
@@ -36,13 +38,13 @@ estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
   return(c(mu = muSum, sigma = sigma_mt, shift = shift))
 }
 
-#' @describeIn estimateSumLognormalSample
+#' @describeIn estimateDiffLognormal
 #' Distribution function for the difference of two lognormals based on sampling.
 #' Default provides the probability that the difference is significantly larger 
 #' than zero.
 #' @param q vector of quantiles
 #' @param nSample number of samples
-#' @return vector of probabilities
+#' @return pDiffLognormalSample: vector of probabilities
 #' @export
 pDiffLognormalSample <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0, 
                                  q = 0, nSample = 1e5){

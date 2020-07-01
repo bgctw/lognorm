@@ -2,9 +2,20 @@
 % Please edit documentation in R/lognormalDiff.R
 \name{estimateDiffLognormal}
 \alias{estimateDiffLognormal}
-\title{Estimatd the shifted-lognormal approximation to difference of two lognormals}
+\alias{pDiffLognormalSample}
+\title{Inference on the difference of two lognormals}
 \usage{
 estimateDiffLognormal(mu_a, mu_b, sigma_a, sigma_b, corr = 0)
+
+pDiffLognormalSample(
+  mu_a,
+  mu_b,
+  sigma_a,
+  sigma_b,
+  corr = 0,
+  q = 0,
+  nSample = 1e+05
+)
 }
 \arguments{
 \item{mu_a}{center parameter of the first term}
@@ -16,13 +27,28 @@ estimateDiffLognormal(mu_a, mu_b, sigma_a, sigma_b, corr = 0)
 \item{sigma_b}{scale parameter of the second term}
 
 \item{corr}{correlation between the two random variables}
+
+\item{q}{vector of quantiles}
+
+\item{nSample}{number of samples}
 }
 \value{
-numeric vector with components mu, sigma, and shift, the components
+estimateDiffLognormal: numeric vector with components mu, sigma, and shift, the components
 of the shifted lognormal distribution.
+
+pDiffLognormalSample: vector of probabilities
 }
 \description{
 The distribtuion of y = a - b + s, where a and b are two lognormal random
 variables and s is a constant to be estimated, can be approximated
 by a lognormal distribution.
 }
+\section{Functions}{
+\itemize{
+\item \code{estimateDiffLognormal}: Estimate the shifted-lognormal approximation to difference of two lognormals
+
+\item \code{pDiffLognormalSample}: Distribution function for the difference of two lognormals based on sampling.
+Default provides the probability that the difference is significantly larger 
+than zero.
+}}
+
