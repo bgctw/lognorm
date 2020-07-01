@@ -5,6 +5,8 @@
 - Add Formulas to vignette of lognormalSum  
 - Add shift argument to moments, mode, and median to deal with shifted
   lognormal distribution.
+- Implement sample-based Distribution function for the difference of two 
+  lognormal variables.
 
 # lognorm 0.1.7
 
