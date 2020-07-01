@@ -85,7 +85,7 @@ mutate(
 
 A check by random numbers (dotted lines) shows close correspondence.
 
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{R plotUncorr, echo=FALSE, fig.height=2.04, fig.width=3.27}
 nSample = 2000
 
 ds <- data.frame(
@@ -126,7 +126,7 @@ computing the difference from a sample of terms.
 In the example both approaches give a probability of less than 5% so
 that we conclude that the difference is significant.
 
-```{r echo=FALSE}
+```{r plotSignifZero, echo=FALSE}
 p <- seq(0,1,length.out = 100)[-c(1,100)]
 dsPredY <- tibble(
   var = "y", 
@@ -246,7 +246,7 @@ dsPredY <- data.frame(
     )
 ```
 
-```{r, echo=FALSE, fig.height=2.04, fig.width=3.27}
+```{r plotDiffLargerVar, echo=FALSE, fig.height=2.04, fig.width=3.27}
 nSample = 2000
 ds <- data.frame(
   a = rlnorm(nSample, mu1, sigma1)

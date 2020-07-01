@@ -91,11 +91,11 @@ The effective autocorrelation function estimated from the sample is:
 
     (effAcf <- computeEffectiveAutoCorr(ds$xErr))
 
-    ## [1] 1.00000000 0.29142196 0.09174139
+    ## [1] 1.0000000 0.3376749
 
     (nEff <- computeEffectiveNumObs(ds$xErr))
 
-    ## [1] 56.92075
+    ## [1] 59.93061
 
 Due to autocorrelation, the effective number of parameters is less than
 nObs = 100.
