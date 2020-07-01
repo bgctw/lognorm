@@ -3,7 +3,7 @@
 #' @importFrom stats acf aggregate anova approx coef cor cov filter lm median 
 #'    na.omit na.pass nls nls.control optim predict quantile resid rnorm sd var 
 #'    AIC model.frame as.formula complete.cases setNames
-#'    plnorm qnorm dlnorm qlnorm
+#'    plnorm qnorm dlnorm qlnorm rlnorm ecdf
 NULL
 
 #' @importFrom Matrix Diagonal bandSparse

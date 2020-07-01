@@ -21,12 +21,6 @@ Estimate vector of effective components of the autocorrelation
 \details{
 Returns all components before first negative autocorrelation
 }
-\examples{
-  # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
-  (effAcf <- computeEffectiveAutoCorr(res))
-}
 \references{
 \code{Zieba 2011 Standard Deviation of the Mean of Autocorrelated
  Observations Estimated with the Use of the Autocorrelation Function Estimated

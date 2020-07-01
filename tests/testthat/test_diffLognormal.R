@@ -25,7 +25,7 @@ test_that("estimateDiffLognormal two Vars",{
   expect_equal( coefSum, coefSumExp, tolerance = 0.02 )
 })
 
-.tmp.f <- function(){
+.tmp.plotsample <- function(){
   nSample = 500
   #nSample = 1e5
   ds <- data.frame(
@@ -86,5 +86,22 @@ test_that("estimateDiffLognormal two Vars negative correlation",{
   coefSum <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2, corr = -0.8 )
   coefSumExp <- c(mu = 6.67, sigma = 0.053, shift = 778.01)
   expect_equal( coefSum, coefSumExp, tolerance = 0.02 )
+})
+
+test_that("pDiffLognormalSample",{
+  # generate nSample values of two lognormal random variables
+  mu1 = log(120)
+  mu2 = log(60)
+  sigma1 = 0.25
+  sigma2 = 0.15
+  #estimateSumLognormalBenchmark( c(mu1,mu2), c(sigma1,sigma2) )
+  coefSum <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2, corr = -0.8 )
+  coefSum
+  q <- c(-1000,0,2,1000)
+  pLo <- plnorm(q + coefSum["shift"], coefSum["mu"], coefSum["sigma"])
+  #.tmp.plotsample()
+  pSample <- pDiffLognormalSample(mu1,mu2,sigma1,sigma2, corr = -0.8, q = q)
+  #cbind(pLo, pSample)
+  expect_equal( pLo, pSample, tolerance = 0.05)
 })
 

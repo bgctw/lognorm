@@ -105,6 +105,53 @@ themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank())
 ```
+## Test if difference is significantly different from zero
+
+The probability of the zero quantile needs to larger than a significane 
+level.
+We can compute it based on the lognormal approximation or by repeatetly
+computing the difference from a sample of terms.
+
+```{r}
+  mu1 = log(120)
+  mu2 = log(60)
+  sigma1 = 0.25
+  sigma2 = 0.15
+  coefSum <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2, corr = -0.8 )
+  pLo <- plnorm(0 + coefSum["shift"], coefSum["mu"], coefSum["sigma"])
+  pSample <- pDiffLognormalSample(mu1,mu2,sigma1,sigma2, corr = -0.8)
+  c(pLo = as.numeric(pLo), pSample = pSample)
+```
+
+In the example both approaches give a probability of less than 5% so
+that we conclude that the difference is significant.
+
+```{r echo=FALSE}
+p <- seq(0,1,length.out = 100)[-c(1,100)]
+dsPredY <- tibble(
+  var = "y", 
+  q_shifted = qlnorm(p, coefSum["mu"], coefSum["sigma"] ),
+  q = q_shifted - coefSum["shift"],
+  d = dlnorm(q_shifted, coefSum["mu"], coefSum["sigma"])
+)
+dsPredA <- tibble(
+  var = "a", 
+  q = qlnorm(p, mu1, sigma1),
+  d = dlnorm(q, mu1, sigma1)
+)
+dsPredB <- tibble(
+  var = "b", 
+  q = qlnorm(p, mu2, sigma2),
+  d = dlnorm(q, mu2, sigma2)
+)
+bind_rows(select(dsPredY, -q_shifted), dsPredA, dsPredB) %>% 
+  #filter(var == "a") %>% 
+  ggplot(aes(q, d, color = var)) + geom_line() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "darkgrey") +
+themeTw +
+theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
+theme(axis.title.x = element_blank())
+```
 
 ## Two positively correlated variables
 ```{r}
@@ -112,8 +159,6 @@ if (!requireNamespace("mvtnorm")) {
   warning("Remainder of the vignette required mvtnorm installed.")
   knitr::opts_chunk$set(error = TRUE) 
 }
-mu_vec = c(mu1, mu2)
-sigma_vec = c(sigma1, sigma2)
 corr = 0.8
 (coefSum <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, corr = corr))
 (expSum <- getLognormMoments(coefSum["mu"], coefSum["sigma"])[,"mean"] - 
@@ -123,10 +168,11 @@ corr = 0.8
 Check with sampled distribution.
 ```{r}
 nSample <- 1e5
+sigma_vec = c(sigma1, sigma2)
 corrM <- setMatrixOffDiagonals(
   diag(nrow = 2), value = corr, isSymmetric = TRUE)
 covM <- diag(sigma_vec) %*% corrM %*% diag(sigma_vec)
-xObsN <- exp(mvtnorm::rmvnorm(nSample, mean = mu_vec, sigma = covM))
+xObsN <- exp(mvtnorm::rmvnorm(nSample, mean =  c(mu1, mu2), sigma = covM))
 head(xObsN)
 y = xObsN[,1] - xObsN[,2]
 ```
@@ -156,7 +202,8 @@ theme(legend.title = element_blank())
 
 The approximation for the difference of negatively correlated random numbers 
 correcly predicts a 
-narrower distribution but shows some differences around the mode.
+narrower distribution than with the uncorrelated difference
+but shows some deviations from the sampled distribution  around the mode.
 
 ## Subtracting a variable with larger variance
 

@@ -36,3 +36,31 @@ estimateDiffLognormal <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0){
   return(c(mu = muSum, sigma = sigma_mt, shift = shift))
 }
 
+#' @describeIn estimateSumLognormalSample
+#' Distribution function for the difference of two lognormals based on sampling.
+#' Default provides the probability that the difference is significantly larger 
+#' than zero.
+#' @param q vector of quantiles
+#' @param nSample number of samples
+#' @return vector of probabilities
+#' @export
+pDiffLognormalSample <- function(mu_a, mu_b, sigma_a, sigma_b, corr = 0, 
+                                 q = 0, nSample = 1e5){
+  y <- if( corr == 0) {
+    a <- rlnorm(nSample, mu_a, sigma_a)
+    b <- rlnorm(nSample, mu_b, sigma_b)
+    y <- a - b
+  } else {
+    if (!requireNamespace("mvtnorm")) stop(
+      "Specifying corr != 0 requires package mvtnorm to be installed.")
+    sigma_vec = c(sigma_a, sigma_b)
+    corrM <- setMatrixOffDiagonals(
+      diag(nrow = 2), value = corr, isSymmetric = TRUE)
+    covM <- diag(sigma_vec) %*% corrM %*% diag(sigma_vec)
+    xObsN <- exp(mvtnorm::rmvnorm(nSample, mean =  c(mu_a, mu_b), sigma = covM))
+    y = xObsN[,1] - xObsN[,2]
+  }
+  cdf <- ecdf(y)
+  cdf(q)
+}
+
