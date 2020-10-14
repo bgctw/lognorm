@@ -179,13 +179,18 @@ example_getParmsLognormForExpval <- function(){
 #' @examples 
 #' .mu <- log(1)
 #' .sigma <- log(2)
-#' x <- exp(rnorm(50, mean = .mu, sd = .sigma))
-#' exp(pL <- estimateParmsLognormFromSample(x))
+#' n = 200
+#' x <- exp(rnorm(n, mean = .mu, sd = .sigma))
+#' exp(pL <- estimateParmsLognormFromSample(x)) # median and multiplicative stddev
 #' c(mean(x), meanx <- getLognormMoments(pL["mu"],pL["sigma"])[,"mean"])
+#' c(sd(x), sdx <- sqrt(getLognormMoments(pL["mu"],pL["sigma"])[,"var"]))
 #' 
-#' # multiplicative stddev for the mean decreases from 2 to 1.1
-#' # but expected value stays the same
-#' exp(se <- estimateStdErrParms(x)) 
+#' # stddev decreases (each sample about 0.9) to about 0.07
+#' # for the mean with n replicated samples
+#' se <- estimateStdErrParms(x)
+#' sqrt(getLognormMoments(se["mu"],se["sigma"])[,"var"])
+#' sd(x)/sqrt(n-1) # well approximated by normal
+#' # expected value stays the same
 #' c(meanx, getLognormMoments(se["mu"],se["sigma"])[,"mean"])
 #' @export
 estimateParmsLognormFromSample <- function(x, na.rm = FALSE){
@@ -194,12 +199,16 @@ estimateParmsLognormFromSample <- function(x, na.rm = FALSE){
 }
 
 #' @describeIn estimateParmsLognormFromSample 
-#'    Estimate lognormal distribution parameters of the mean from a sample
+#'    Estimate parameters of the lognormal distribution of the mean from an uncorrelated sample
 #' @details The expected value of a can be determined with
 #'   higher accuracy the larger the sample. Here, the uncorrelated
 #'   assumption is applied at the log scale and distribution parameters
 #'   are returned with the same expected value as the sample, but with
 #'   uncertainty (sigma) decreased by sqrt(nfin - 1). 
+#'   
+#'   Since with low relative error, the lognormal becomes very close
+#'   to the normal distribution, the distribution of the mean can be
+#'   well approximated by a normal with sd(mean(x)) ~ sd(x)/sqrt(n-1).
 #' 
 #' @export
 estimateStdErrParms <- function(x, na.rm = FALSE){
