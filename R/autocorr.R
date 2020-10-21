@@ -58,13 +58,15 @@ seCor <- function(
 #' time series. 
 #' Supplement to the Journal of the Royal Statistical Society, JSTOR,8,184-197}
 #'
+#' @details Assumes records of all times present. 
+#' DO NOT REMOVE NA records before. The length of the time series is used.
 #' @details Handling of NA values: NAs at the beginning or end are 
 #' just trimmed before computation and pose no problem. 
 #' However with NAs aside from edges, the return value is biased low,
 #' because correlation terms are subtracted for those positions.
 #' @details Because of NA correlation terms, the computed effective number of
 #' observations can be smaller than 1. In this case 1 is returned.
-
+#' 
 #' @export
 #' @return integer scalar: effective number of observations
 #' @exampleFunction example_computeEffectiveNumObs

@@ -211,7 +211,7 @@ estimateParmsLognormFromSample <- function(x, na.rm = FALSE){
 #'   well approximated by a normal with sd(mean(x)) ~ sd(x)/sqrt(n-1).
 #' 
 #' @export
-estimateStdErrParms <- function(x, na.rm = FALSE){
+  estimateStdErrParms <- function(x, na.rm = FALSE){
   pl <- estimateParmsLognormFromSample(x = x, na.rm = na.rm)
   sigma <- pl["sigma"]
   logmean <- pl["mu"] + sigma^2/2
