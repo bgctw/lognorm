@@ -29,8 +29,11 @@ Compute the effective number of observations taking into account autocorrelation
 \details{
 Handling of NA values: NAs at the beginning or end are 
 just trimmed before computation and pose no problem. 
-However with NAs aside from edges, the return value is biased low,
-because correlation terms are subtracted for those positions.
+However with NAs aside from edges, the return value of nEff is biased low,
+because correlation for pairs involving NA is still accounted in the 
+denominator of (3) in Zieba 2011.
+This leads to a conservative (biased high) estimates of standard errors.
+The effect should be small if length(acf) < n_finite.
 
 Because of NA correlation terms, the computed effective number of
 observations can be smaller than 1. In this case 1 is returned.
@@ -42,6 +45,7 @@ Observations Estimated with the Use of the Autocorrelation Function
 Estimated From the Data. 
 Metrology and Measurement Systems, 
 Walter de Gruyter GmbH, 18 10.2478/v10178-011-0052-x}
+
 \code{Bayley & Hammersley (1946) 
 The "effective" number of independent observations in an autocorrelated 
 time series. 

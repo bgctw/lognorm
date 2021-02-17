@@ -53,6 +53,7 @@ seCor <- function(
 #' Estimated From the Data. 
 #' Metrology and Measurement Systems, 
 #' Walter de Gruyter GmbH, 18 10.2478/v10178-011-0052-x}
+#'
 #' \code{Bayley & Hammersley (1946) 
 #' The "effective" number of independent observations in an autocorrelated 
 #' time series. 
@@ -60,8 +61,11 @@ seCor <- function(
 #'
 #' @details Handling of NA values: NAs at the beginning or end are 
 #' just trimmed before computation and pose no problem. 
-#' However with NAs aside from edges, the return value is biased low,
-#' because correlation terms are subtracted for those positions.
+#' However with NAs aside from edges, the return value of nEff is biased low,
+#' because correlation for pairs involving NA is still accounted in the 
+#' denominator of (3) in Zieba 2011.
+#' This leads to a conservative (biased high) estimates of standard errors.
+#' The effect should be small if length(acf) < n_finite.
 #' @details Because of NA correlation terms, the computed effective number of
 #' observations can be smaller than 1. In this case 1 is returned.
 
@@ -81,9 +85,20 @@ computeEffectiveNumObs <- function(
   effAcfD <- effAcf[-1] # without zero distance
   # correlations may have been computed on a sample larger than given
   # then only use the 1..(n-1) components
+  # If there an NAs in resTr then nFin < length(resTr) and the numerator is 
+  # decreased.
+  # But autocorrelation is still accounted for pairs involving NA.
+  # Therefore, the denominator is overestimated and hence the fraction nEff is 
+  # underestimated.
   nC <- min(length(resTr) - 1, length(effAcfD))
+  #?nC <- min(n - 1, length(effAcfD))
   if (nC == 0) return(n)
   nEff0 <- n/(1 + 2*sum((1 - 1:nC/length(resTr))*effAcfD[1:nC]))
+  # alternative for missings: using n=nFin instead of length(resTr) in k/n
+  # i.e. computed on vector omitting NA
+  # k/nFin is smaller then k/length(resTr) -> (1-k/N) larger -> 
+  #   denominator larger -> nEff smaller 
+  # this increases the bias underestimating nEff -> prefer length(nTr) solution
   nEff <- max(1, nEff0)  
   if ( nEff > n) stop("encountered nEff larger than finite records.")
   nEff

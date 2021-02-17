@@ -26,7 +26,7 @@ getParmsLognormForMeanAndUpper <- function(
   # solution of
   # (1) mle = exp(mu - sigma^2)
   # (2) upper = mu + sigmaFac sigma
-  # see inst/doc/coefLognorm.Rmd for derivation
+  # see inst/docu/coefLognorm.Rmd for derivation
   m <- log(mean)
   #sigma <- sigmaFac + sqrt(sigmaFac^2 - 2*(log(upper) - m))
   sigma <- sigmaFac - sqrt(sigmaFac^2 - 2*(log(upper) - m))

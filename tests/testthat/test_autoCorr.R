@@ -39,7 +39,7 @@ test_that(".trimNA",{
 test_that("computeEffectiveNumObs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
+  #res[100:120] <- NA # checked in test below
   .tmp.f <- function(){
     plot(res)
     acf(res, na.action = na.pass)
@@ -54,13 +54,13 @@ test_that("computeEffectiveNumObs with NA",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(1000), filter = rep(1,8), circular = TRUE)
   effAcfFull <- computeEffectiveAutoCorr(res)
-  res[8:1000] <- NA
-  nEff <- computeEffectiveNumObs(res)
-  # if first correlation is negative, nEff will be equal
-  expect_true(nEff <=  sum(is.finite(res))) 
-  expect_true(nEff >=  1)
+  # tail NA
+  res[8:1000] <- NA  # tail NA
+  res1 <- res  # store for later comparison
+  nEff <- nEff1 <- computeEffectiveNumObs(res) # here NA argument not needed
+  expect_equal(nEff, computeEffectiveNumObs(res[1:7]))
   res[3] <- NA
-  nEff <- computeEffectiveNumObs(res)
+  nEff <- computeEffectiveNumObs(res) # without NA argument
   expect_true(is.na(nEff))
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_true(nEff <=  sum(is.finite(res)))
@@ -92,6 +92,27 @@ test_that("computeEffectiveNumObs with no finite obs",{
   expect_equal(nEff,0)
 })
 
+boot_seCor_corrNormal <- function(){
+  library(mvtnorm)
+  library(Matrix)
+  set.seed(456)
+  nTerm = 1000
+  acf1 = c(1,0.5, 0.2)
+  Sigma = getCorrMatFromAcf(nTerm, acf1)
+  nBoot = 2000
+  #x = rmvnorm(nBoot, sigma = diag(3))
+  x = rmvnorm(nBoot, sigma = as.matrix(Sigma))
+  #eacf = apply(x,1, computeEffectiveAutoCorr)
+  # apply seCor to each sample
+  ses = apply(x,1, seCor, effCov = acf1)
+  plot(density(ses))
+  # compare to to standard deviation across bootstap of means
+  means <- apply(x,1,mean)
+  abline(v = sd(means))
+  # works out nicely, although there is quite some uncertainty
+  # of the estimate of seCor
+}
+
 test_that("seCor uncorrelated series",{
   n <- 10000
   x <- rnorm(n, mean = 10, sd = sqrt(2))
@@ -101,36 +122,35 @@ test_that("seCor uncorrelated series",{
   expect_equal(ans, expected, tolerance = 0.05, scale = expected)
 })
 
-test_that("seCor AR1",{
-  n <- 1000
-  rho <- 0.7
-  sigmaEps <- sqrt(2)
+seAR1 <- function(n, sigmaEps, rho){
   #https://stats.stackexchange.com/questions/40585/how-to-compute-the-standard-error-of-the-mean-of-an-ar1-process
   cov <- 0
   j <- 1:n
   for (i in 1:n) {
     cov <- cov + sum( (sigmaEps^2/((n^2)*(1 - rho^2)))*rho^abs(j - i) )
   }
-  ansTheory <- sqrt(cov)
-  # nBoot <- 200
-  # means <- numeric(nBoot)
-  # for (i in 1:nBoot) {
-  #   means[i] <- mean(arima.sim(
-  #     model = list(ar = c(rho)), n = n, mean = 0, sd = sigmaEps))
-  # }  
-  # #plot(density(means))
-  # ansSim <- sd(means)
-  ansRep <- map_dbl(1:8, ~seCor(arima.sim(
+  sqrt(cov)
+} 
+
+test_that("seCor AR1",{
+  n <- 1000
+  rho <- 0.7
+  sigmaEps <- sqrt(2)
+  seTheory <- seAR1(n, sigmaEps,rho)
+  nboot = 8
+  #nboot = 1000
+  ansRep <- map_dbl(1:nboot, ~seCor(arima.sim(
     model = list(ar = c(rho)), n = n, mean = 0, sd = sigmaEps)))
   ans <- mean(ansRep)
-  c(ans, ansTheory) 
-  expect_equal(ans, ansTheory, tolerance = 0.1, scale = ansTheory)
+  c(ans, seTheory) 
+  #plot(density(ansRep)); abline(v=seTheory)
+  expect_equal(ans, seTheory, tolerance = 0.1, scale = seTheory)
   .tmp.f <- function(){
     # compare to results based on nEff
     ansRep <- map_dbl(1:8, function(i){
       x <- arima.sim(model = list(ar = c(rho)), n = n, mean = 0, sd = sigmaEps)
       nEff <- computeEffectiveNumObs(x)
-      seCor(x)
+      #seCor(x)
       sd(x)/sqrt(nEff) # formulas equal
     })
   }

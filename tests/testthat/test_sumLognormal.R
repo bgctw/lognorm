@@ -64,10 +64,10 @@ test_that("estimateSumLognormal correlated, few Vars",{
   corrM <- setMatrixOffDiagonals(
     diag(nrow = length(mu)), value = acf1, isSymmetric = TRUE)
   nSample = 500
-  rM <- exp(mvtnorm::rmvnorm(nSample, mean = mu, sigma = diag(sigma) %*% corrM %*% diag(sigma)))
+  Sigma = diag(sigma) %*% corrM %*% diag(sigma)
+  rM <- exp(mvtnorm::rmvnorm(nSample, mean = mu, sigma = Sigma, method = "chol"))
   #
   coefSum <- estimateSumLognormal(mu, sigma, corr = corrM )
-  expect_equal( coefSum["mu"], c(mu = log(sum(exp(mu)))), tolerance = 0.02 )
   # regression to previous result checked with random numbers below
   expect_equal(
     exp(coefSum["sigma"]),  c(sigma = 1.133632), tolerance = 0.02 )
@@ -187,7 +187,7 @@ test_that("estimateSumLognormalSampleGapfilled",{
 
 test_that("sumDecrease",{
   # here use uncorrelated sample to not require mvtnorm
-  nObs <- 1000
+  nObs <- 5
   xTrue <- rep(10, nObs)
   sigmaStar <- rep(1.5, nObs) # multiplicative stddev of 1.2
   theta <- getParmsLognormForExpval(xTrue, sigmaStar)
@@ -199,6 +199,7 @@ test_that("sumDecrease",{
   #   100, mean = theta[,1]
   #   , sigma = diag(theta[,2]) %*% corrM %*% diag(theta[,2])))
   nRep = 30
+  #nRep = 1e6
   xObsN <- matrix(NA_real_, nrow = nRep, ncol = nObs)
   for (i in 1:nRep) {
     xObsN[i,] <- xObs <- exp(rnorm(nObs, theta[,1], theta[,2]))
@@ -209,7 +210,20 @@ test_that("sumDecrease",{
   #plot(density(rowSums(xObsN))); abline(v = sum(xTrue))
   coefSample <- estimateParmsLognormFromSample(sums)
   coefSum <- estimateSumLognormal( theta[,1], theta[,2])
-  expect_equal(coefSum, coefSample, tolerance = 0.01)
+  moments = getLognormMoments(coefSum[["mu"]], coefSum[["sigma"]])
+  c(sqrt(as.vector(moments[,"var"])), sd(sums))
+  expect_equal(sqrt(as.vector(moments[,"var"])), sd(sums), tolerance = 0.5)
+  expect_true((moments[,"mean"] - sum(xTrue)) < 4*sqrt(moments[,"var"]))
+  expect_equal(coefSum, coefSample, tolerance = 0.02)
+  .tmp.f <- function(){
+    plot(ecdf(sums))
+    q = seq(qlnorm(0.025, coefSum[1], coefSum[2]), qlnorm(0.975, coefSum[1], coefSum[2]), length.out = 201)
+    cdf = plnorm(q, coefSum[1], coefSum[2])
+    lines(cdf ~ q, col = "blue")
+    #
+    plot(density(sums))
+    lines(dlnorm(q, coefSum[1], coefSum[2]) ~ q, col = "blue")
+  }
 })
 
 
