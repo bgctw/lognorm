@@ -49,7 +49,7 @@ i.e. practical maximum}
 \item{sigmaStar}{multiplicative standard deviation}
 }
 \value{
-numeric matrix wiht columns `mu` and `sigma`, the parameter of the
+numeric matrix with columns `mu` and `sigma`, the parameter of the
   lognormal distribution. Rows correspond to rows of inputs.
 }
 \description{

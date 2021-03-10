@@ -10,7 +10,7 @@ vignette: >
 ---
 ```{r eval=FALSE, include=FALSE}
 # twDev::genVigs()
-rmarkdown::render("lognorm.Rmd","md_document") 
+#rmarkdown::render("lognorm.Rmd","md_document") 
 ```
 
 ```{r setup, include=FALSE}
@@ -32,10 +32,10 @@ knit_hooks$set(spar = function(before, options, envir) {
 })
 library(lognorm) 
 if (!require(ggplot2) || !require(dplyr) || !require(purrr)) {
-	print("To generate this vignette, ggplo2, dplyr, and purrr are required.")
-	exit(0)
+	print("To generate this vignette, ggplot2, dplyr, and purrr are required.")
+	knit_exit()
 }
-themeTw <- theme_bw(base_size = 10) + 
+themeTw <- ggplot2::theme_bw(base_size = 10) + 
   theme(axis.title = element_text(size = 9))
 ```
 

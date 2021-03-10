@@ -64,7 +64,7 @@ getParmsLognormForLowerAndUpperLog <- function(
 #'    i.e. practical maximum
 #' @param sigmaFac sigmaFac=2 is 95\% sigmaFac=2.6 is 99\% interval.
 #'
-#' @return numeric matrix wiht columns `mu` and `sigma`, the parameter of the
+#' @return numeric matrix with columns `mu` and `sigma`, the parameter of the
 #'   lognormal distribution. Rows correspond to rows of inputs.
 #' @export
 #' @examples
@@ -171,7 +171,7 @@ getParmsLognormForExpval <- function(mean, sigmaStar){
 #' NA values should be stripped before the computation proceeds.
 #'
 #' @return numeric vector with components \code{mu} and \code{sigma},
-#' ie.., the center parameter (mean at log scale, log(median)) and 
+#' i.e., the center parameter (mean at log scale, log(median)) and 
 #' the scale parameter (standard deviation at log scale)
 #' 
 #' @examples 

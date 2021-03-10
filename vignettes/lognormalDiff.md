@@ -99,12 +99,12 @@ A check by random numbers (dotted lines) shows close correspondence.
 
 ## Test if difference is significantly different from zero
 
-The probability of the zero quantile needs to be larger than a significane 
+The probability of the zero quantile needs to be larger than a significance 
 level.
 We can compute it based on the lognormal approximation.
 
 Since Lo12 is only accurate if the expected difference is small compared
-to the expected sum, the probiblity of the difference being larger than zero can be estimated by a sampling both terms.
+to the expected sum, the probability of the difference being larger than zero can be estimated by a sampling both terms.
 
 
 ```r

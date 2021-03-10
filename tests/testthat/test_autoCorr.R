@@ -70,6 +70,7 @@ test_that("computeEffectiveNumObs",{
 
 test_that("computeEffectiveNumObs with NA",{
   # generate autocorrelated time series
+  set.seed(0815)
   res <- stats::filter(rnorm(1000), filter = rep(1,8), circular = TRUE)
   effAcfFull <- computeEffectiveAutoCorr(res)
   # tail NA
@@ -84,7 +85,7 @@ test_that("computeEffectiveNumObs with NA",{
   expect_true(nEff <=  sum(is.finite(res)))
   # positive bias not accounting for missings
   nEff3 <- computeEffectiveNumObs(res, na.rm = TRUE, exact.na = FALSE)
-  expect_true(nEff3 > nEff) 
+  expect_true(nEff3 > nEff) # may fail due to only 7 random numbers
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE, effAcf = effAcfFull)
   expect_true(nEff <=  sum(is.finite(res)))
   expect_true(nEff >=  1)

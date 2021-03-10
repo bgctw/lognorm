@@ -58,7 +58,7 @@ abline(v = getLognormMedian(coefSum["mu"], coefSum["sigma"]), lty = "dotdash")
 
 ![](tools/README-example-1.png)
 
-The sum of the expected values is conserved, while the mutliplicative standard deviation decreases during aggregation:
+The sum of the expected values is conserved, while the multiplicative standard deviation decreases during aggregation:
 
 ``` r
 c( 

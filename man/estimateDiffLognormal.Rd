@@ -39,7 +39,7 @@ of the shifted lognormal distribution.
 pDiffLognormalSample: vector of probabilities
 }
 \description{
-The distribtuion of y = a - b + s, where a and b are two lognormal random
+The distribution of y = a - b + s, where a and b are two lognormal random
 variables and s is a constant to be estimated, can be approximated
 by a lognormal distribution.
 }

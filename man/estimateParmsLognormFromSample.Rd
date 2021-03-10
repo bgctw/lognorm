@@ -17,7 +17,7 @@ NA values should be stripped before the computation proceeds.}
 }
 \value{
 numeric vector with components \code{mu} and \code{sigma},
-ie.., the center parameter (mean at log scale, log(median)) and 
+i.e., the center parameter (mean at log scale, log(median)) and 
 the scale parameter (standard deviation at log scale)
 }
 \description{

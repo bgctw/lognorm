@@ -112,7 +112,7 @@ variables. The multiplicative uncertainty has decreased from 1.7.
     ## sigmaStar 
     ##  1.077687
 
-Its expected value corresponds to the summ of expected values (100\*10).
+Its expected value corresponds to the sum of expected values (100\*10).
 
     (sumExp <- getLognormMoments( coefSum[1], coefSum[2])[1,"mean"])
 
@@ -124,9 +124,9 @@ the distribution of the 10000 repetitions.
 
 <img src="lognormalSum_files/figure-markdown_strict/pdfSum100-1.png" style="display:block; margin: auto" />
 
-The mean is the sum devided by the number of observations, *n*. While
-the multiplicatie standard deviation does not change by this operation,
-the location parameter is obtained by deviding by *n* at original scale,
+The mean is the sum divided by the number of observations, *n*. While
+the multiplicative standard deviation does not change by this operation,
+the location parameter is obtained by dividing by *n* at original scale,
 hence, subtracting *l**o**g*(*n*) at log-scale.
 
     (coefMean <- setNames(c(coefSum["mu"] - log(nObs), coefSum["sigma"]), c("mu","sigma")))

@@ -1,6 +1,6 @@
 Package: lognorm
 Title: Functions for the Lognormal Distribution
-Version: 0.1.8
+Version: 0.1.9
 Author: Thomas Wutzler
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: The lognormal distribution  
@@ -13,7 +13,7 @@ Description: The lognormal distribution
   difference of two correlated lognormally distributed variables
   (Lo 2012 <doi:10.1155/2012/838397>).
 Imports: Matrix
-Suggests: testthat, knitr,  dplyr, ggplot2, mvtnorm, purrr, tidyr
+Suggests: markdown, rmarkdown, testthat, knitr,  dplyr, ggplot2, mvtnorm, purrr, tidyr
 VignetteBuilder: knitr
 License: GPL-2
 LazyData: true

@@ -1,5 +1,5 @@
 # lognorm 0.1.9
-- Improved handling of missing values in computeEffectiveNumObs
+- Less bias with missing values in computeEffectiveNumObs
 - New function varCor to compute unbiased variance of uncorrelated time series
 - seCor now based on varCor, which reduces bias for small number of effective
   observations.

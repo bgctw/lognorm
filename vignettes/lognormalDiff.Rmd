@@ -9,7 +9,7 @@ vignette: >
 ---
 ```{r eval=FALSE, include=FALSE}
 # twDev::genVigs()
-rmarkdown::render("lognormalDiff.Rmd","md_document") 
+#rmarkdown::render("lognormalDiff.Rmd","md_document") 
 ```
 
 ```{r setup, include=FALSE}
@@ -31,10 +31,10 @@ knit_hooks$set(spar = function(before, options, envir) {
 })
 library(lognorm) 
 if (!require(ggplot2) || !require(dplyr) || !require(tidyr) || !require(purrr)) {
-	print("To generate this vignette, ggplo2, dplyr, tidyr, and purrr are required.")
-	exit(0)
+	print("To generate this vignette, ggplot2, dplyr, tidyr, and purrr are required.")
+	knit_exit()
 }
-themeTw <- theme_bw(base_size = 10) + 
+themeTw <- ggplot2::theme_bw(base_size = 10) + 
   theme(axis.title = element_text(size = 9))
 ```
 
@@ -108,12 +108,12 @@ theme(axis.title.x = element_blank())
 
 ## Test if difference is significantly different from zero
 
-The probability of the zero quantile needs to be larger than a significane 
+The probability of the zero quantile needs to be larger than a significance 
 level.
 We can compute it based on the lognormal approximation.
 
 Since Lo12 is only accurate if the expected difference is small compared
-to the expected sum, the probiblity of the difference being larger than zero can be estimated by a sampling both terms.
+to the expected sum, the probability of the difference being larger than zero can be estimated by a sampling both terms.
 
 ```{r}
   mu1 = log(120)

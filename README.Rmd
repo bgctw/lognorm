@@ -72,7 +72,7 @@ abline(v = getLognormMode(coefSum["mu"], coefSum["sigma"]), lty = "dashed")
 abline(v = getLognormMedian(coefSum["mu"], coefSum["sigma"]), lty = "dotdash")
 ```
 
-The sum of the expected values is conserved, while the mutliplicative standard 
+The sum of the expected values is conserved, while the multiplicative standard 
 deviation decreases during aggregation:
 
 ```{r}
