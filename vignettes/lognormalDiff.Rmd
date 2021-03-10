@@ -56,17 +56,17 @@ mu1 = log(110)
 mu2 = log(100)
 sigma1 = 0.25
 sigma2 = 0.15
-#(coefSum <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
-(coefSum <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, 0))
-(expSum <- getLognormMoments(coefSum["mu"], coefSum["sigma"])[,"mean"] - 
-    coefSum["shift"])
+#(coefDiff <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
+(coefDiff <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, 0))
+(expDiff <- getLognormMoments(coefDiff["mu"], coefDiff["sigma"])[,"mean"] - 
+    coefDiff["shift"])
 ```
 
 Several functions accept the `shift` argument to handle this already.
 ```{r}
-getLognormMoments(coefSum["mu"], coefSum["sigma"], shift = coefSum["shift"])
-getLognormMode(coefSum["mu"], coefSum["sigma"], shift = coefSum["shift"])
-getLognormMedian(coefSum["mu"], coefSum["sigma"], shift = coefSum["shift"])
+getLognormMoments(coefDiff["mu"], coefDiff["sigma"], shift = coefDiff["shift"])
+getLognormMode(coefDiff["mu"], coefDiff["sigma"], shift = coefDiff["shift"])
+getLognormMedian(coefDiff["mu"], coefDiff["sigma"], shift = coefDiff["shift"])
 ```
 
 For the functions from the stats package, the shifting has to be done
@@ -75,11 +75,11 @@ manually.
 p <- seq(0,1,length.out = 100)[-c(1,100)]
 dsPredY <- data.frame(
   var = "y", 
-  q_shifted = qlnorm(p, coefSum["mu"], coefSum["sigma"] )
+  q_shifted = qlnorm(p, coefDiff["mu"], coefDiff["sigma"] )
 ) %>%
 mutate( 
-  q = q_shifted - coefSum["shift"],
-  d = dlnorm(q_shifted, coefSum["mu"], coefSum["sigma"])
+  q = q_shifted - coefDiff["shift"],
+  d = dlnorm(q_shifted, coefDiff["mu"], coefDiff["sigma"])
 )
 ```
 
@@ -99,8 +99,8 @@ p1 <- dsw %>% filter(var == "y") %>%
   ggplot(aes(value, color = var)) + geom_density(linetype = "dotted") +
   geom_vline(xintercept = mean(ds$y), linetype = "dotted")
 p1 + geom_line(data = dsPredY, aes(q, d, color = var)) +
-  geom_vline(aes(xintercept = expSum, color = var), 
-             data = data.frame(var = "y", q = expSum)) +
+  geom_vline(aes(xintercept = expDiff, color = var), 
+             data = data.frame(var = "y", q = expDiff)) +
 themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank())
@@ -108,18 +108,20 @@ theme(axis.title.x = element_blank())
 
 ## Test if difference is significantly different from zero
 
-The probability of the zero quantile needs to larger than a significane 
+The probability of the zero quantile needs to be larger than a significane 
 level.
-We can compute it based on the lognormal approximation or by repeatetly
-computing the difference from a sample of terms.
+We can compute it based on the lognormal approximation.
+
+Since Lo12 is only accurate if the expected difference is small compared
+to the expected sum, the probiblity of the difference being larger than zero can be estimated by a sampling both terms.
 
 ```{r}
   mu1 = log(120)
   mu2 = log(60)
   sigma1 = 0.25
   sigma2 = 0.15
-  coefSum <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2, corr = -0.8 )
-  pLo <- plnorm(0 + coefSum["shift"], coefSum["mu"], coefSum["sigma"])
+  coefDiff <- estimateDiffLognormal( mu1,mu2,sigma1,sigma2, corr = -0.8 )
+  pLo <- plnorm(0 + coefDiff["shift"], coefDiff["mu"], coefDiff["sigma"])
   pSample <- pDiffLognormalSample(mu1,mu2,sigma1,sigma2, corr = -0.8)
   c(pLo = as.numeric(pLo), pSample = pSample)
 ```
@@ -131,9 +133,9 @@ that we conclude that the difference is significant.
 p <- seq(0,1,length.out = 100)[-c(1,100)]
 dsPredY <- tibble(
   var = "y", 
-  q_shifted = qlnorm(p, coefSum["mu"], coefSum["sigma"] ),
-  q = q_shifted - coefSum["shift"],
-  d = dlnorm(q_shifted, coefSum["mu"], coefSum["sigma"])
+  q_shifted = qlnorm(p, coefDiff["mu"], coefDiff["sigma"] ),
+  q = q_shifted - coefDiff["shift"],
+  d = dlnorm(q_shifted, coefDiff["mu"], coefDiff["sigma"])
 )
 dsPredA <- tibble(
   var = "a", 
@@ -161,9 +163,9 @@ if (!requireNamespace("mvtnorm")) {
   knitr::opts_chunk$set(error = TRUE) 
 }
 corr = 0.8
-(coefSum <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, corr = corr))
-(expSum <- getLognormMoments(coefSum["mu"], coefSum["sigma"])[,"mean"] - 
-    coefSum["shift"])
+(coefDiff <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, corr = corr))
+(expDiff <- getLognormMoments(
+  coefDiff["mu"], coefDiff["sigma"], shift = coefDiff["shift"])[,"mean"])
 ```
 
 Check with sampled distribution.
@@ -182,11 +184,11 @@ y = xObsN[,1] - xObsN[,2]
 p <- seq(0,1,length.out = 100)[-c(1,100)]
 dsPredY <- data.frame(
   var = "y", 
-  q_shifted = qlnorm(p, coefSum["mu"], coefSum["sigma"] )
+  q_shifted = qlnorm(p, coefDiff["mu"], coefDiff["sigma"] )
 ) %>%
   mutate( 
-    q = q_shifted - coefSum["shift"],
-    d = dlnorm(q_shifted, coefSum["mu"], coefSum["sigma"])
+    q = q_shifted - coefDiff["shift"],
+    d = dlnorm(q_shifted, coefDiff["mu"], coefDiff["sigma"])
     )
 # density plot of the random draws
 ggplot(data.frame(y = y), aes(y, color = "random draws")) + 
@@ -194,21 +196,20 @@ ggplot(data.frame(y = y), aes(y, color = "random draws")) +
   # line plot of the lognorm density approximation
   geom_line(data = dsPredY, aes(q, d, color = "computed diff")) +
   # expected value
-  geom_vline(xintercept = expSum, linetype = "dashed") +
+  geom_vline(xintercept = expDiff, linetype = "dashed") +
 themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank()) +
 theme(legend.title = element_blank())
 ```
 
-The approximation for the difference of negatively correlated random numbers 
-correcly predicts a 
-narrower distribution than with the uncorrelated difference
-but shows some deviations from the sampled distribution  around the mode.
+The approximation for the difference of positively correlated random numbers 
+predicts a 
+narrower distribution than with the uncorrelated or negatively correlated difference above. However, this case less accurate and shows some deviations from the sampled distribution around the mode.
 
 ## Subtracting a variable with larger variance
 
-The method only works if the $\sigma_b < \sigma_a$ and otherwise
+The method of Lo12 requires $\sigma_b < \sigma_a$ and otherwise
 gives an error.
 
 ```{r}
@@ -217,33 +218,30 @@ mu1 = log(110)
 mu2 = log(100)
 sigma1 = 0.15
 sigma2 = 0.25
-#(coefSum <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
-try(coefSum <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, 0))
+try(coefDiff <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, 0))
 ```
 
 But one can compute the density of $y_r = -y = b - a$ and plot 
 the density of the shifted and negated distribution.
 
 ```{r}
-# generate nSample values of two lognormal random variables
-mu1 = log(110)
-mu2 = log(100)
-sigma1 = 0.15
-sigma2 = 0.25
-#(coefSum <- estimateSumLognormal( c(mu1,mu2), c(sigma1,sigma2) ))
-(coefSum <- estimateDiffLognormal(mu2,mu1, sigma2,sigma1, 0))
-(expSum <- -(getLognormMoments(coefSum["mu"], coefSum["sigma"])[,"mean"] - 
-    coefSum["shift"]))
+# note the switch of positions of mu1 and mu2: mu2 - mu1
+#(coefDiff <- estimateDiffLognormal(mu1,mu2, sigma1,sigma2, 0)
+(coefDiff <- estimateDiffLognormal(mu2,mu1, sigma2,sigma1, 0))
+# note the minus sign in front
+(expDiff <- -(getLognormMoments(
+  coefDiff["mu"], coefDiff["sigma"], shift = coefDiff["shift"])[,"mean"]))
 ```
 ```{r}
 p <- seq(0,1,length.out = 100)[-c(1,100)]
 dsPredY <- data.frame(
   var = "y", 
-  q_shifted_neg = qlnorm(p, coefSum["mu"], coefSum["sigma"] )
+  q_shifted_neg = qlnorm(p, coefDiff["mu"], coefDiff["sigma"] )
 ) %>%
   mutate( 
-    q = -(q_shifted_neg - coefSum["shift"]),
-    d = dlnorm(q_shifted_neg, coefSum["mu"], coefSum["sigma"])
+    # note the minus sign in front
+    q = -(q_shifted_neg - coefDiff["shift"]),
+    d = dlnorm(q_shifted_neg, coefDiff["mu"], coefDiff["sigma"])
     )
 ```
 
@@ -262,8 +260,8 @@ p1 <- dsw %>% filter(var == "y") %>%
 #
 
 p1 + geom_line(data = dsPredY, aes(q, d, color = var)) +
-  geom_vline(aes(xintercept = expSum, color = var), 
-             data = data.frame(var = "y", q = expSum)) +
+  geom_vline(aes(xintercept = expDiff, color = var), 
+             data = data.frame(var = "y", q = expDiff)) +
 themeTw +
 theme(legend.position = c(0.98,0.98), legend.justification = c(1,1)) +
 theme(axis.title.x = element_blank())

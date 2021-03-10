@@ -29,3 +29,11 @@ The BLUE is not anymore the usual variance, but a modified
  variance as given in \code{Zieba 2011}
  @return The estimated variance of the sample
 }
+\examples{
+  # generate autocorrelated time series
+  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+  res[100:120] <- NA
+  # if correlations are neglected, the estimate of the variance is biased low
+  (varNeglectCorr <- var(res, na.rm = TRUE))
+  (varCorr <- varEffective(res, na.rm = TRUE))
+}
