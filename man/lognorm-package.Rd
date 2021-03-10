@@ -39,7 +39,7 @@ a separate package in future.
 \itemize{
   \item standard error of the mean: \code{\link{seCor}} 
   \item effective number of observations \code{\link{computeEffectiveNumObs}} 
-  \item variance: \code{\link{varEffective}} 
+  \item variance: \code{\link{varCor}} 
   }
 \item Return the vector of effective components of the autocorrelation: 
   \code{\link{computeEffectiveAutoCorr}} 

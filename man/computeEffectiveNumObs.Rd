@@ -7,7 +7,8 @@
 computeEffectiveNumObs(
   res,
   effAcf = computeEffectiveAutoCorr(res),
-  na.rm = FALSE
+  na.rm = FALSE,
+  exact.na = TRUE
 )
 }
 \arguments{
@@ -17,8 +18,12 @@ model residuals}
 \item{effAcf}{autocorrelation coefficients.
 The first entry is fixed at 1 for zero distance.}
 
-\item{na.rm}{a logical value indicating whether NA values should be 
-stripped before the computation proceeds.}
+\item{na.rm}{if not set to TRUE will return NA in there are missings
+in the series}
+
+\item{exact.na}{if set to FALSE then do not count and correct for missing
+in the sum of autocorrelation terms. This is faster, but results are
+increasingly biased high with increasing number of missings.}
 }
 \value{
 integer scalar: effective number of observations
@@ -27,28 +32,25 @@ integer scalar: effective number of observations
 Compute the effective number of observations taking into account autocorrelation
 }
 \details{
-Handling of NA values: NAs at the beginning or end are 
-just trimmed before computation and pose no problem. 
-However with NAs aside from edges, the return value of nEff is biased low,
-because correlation for pairs involving NA is still accounted in the 
-denominator of (3) in Zieba 2011.
-This leads to a conservative (biased high) estimates of standard errors.
-The effect should be small if length(acf) < n_finite.
+Assumes records of all times present. 
+DO NOT REMOVE OR FILTER NA records before. 
+The length of the time series is used.
 
-Because of NA correlation terms, the computed effective number of
-observations can be smaller than 1. In this case 1 is returned.
+Handling of NA values: The formula from Zieba 2011 is extended
+to subtract the number of missing pairs in the count of correlation terms.
+If `exact.na=false` the original formula is used (after trimming edge-NAs).
 }
 \examples{
-  # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
-  # plot the series of autocorrelated random variables
-  plot(res)
-  # plot their empirical autocorrelation function
-  acf(res, na.action = na.pass)
-  #effAcf <- computeEffectiveAutoCorr(res)
-  # the effective number of parameters is less than number of 1000 samples
-  (nEff <- computeEffectiveNumObs(res, na.rm = TRUE))
+# generate autocorrelated time series
+res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+res[100:120] <- NA
+# plot the series of autocorrelated random variables
+plot(res)
+# plot their empirical autocorrelation function
+acf(res, na.action = na.pass)
+#effAcf <- computeEffectiveAutoCorr(res)
+# the effective number of parameters is less than number of 1000 samples
+(nEff <- computeEffectiveNumObs(res, na.rm = TRUE))
 }
 \references{
 \code{Zieba & Ramza (2011) 

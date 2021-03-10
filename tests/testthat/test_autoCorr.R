@@ -36,6 +36,24 @@ test_that(".trimNA",{
   expect_equal( .trimNA(y), x)
 })
 
+test_that("lognorm:::count_NA_forlags",{
+  x <- 1:5
+  x[2:3] <- NA
+  lags = 0:(length(x)-1)
+  km = lognorm:::count_NA_forlags(x, lags)
+  expect_equal( km, c(2,3,3,1,0))
+  #
+  x <- 1:6
+  x[3:4] <- NA
+  lags = 0:(length(x)-1)
+  km = lognorm:::count_NA_forlags(x, lags)
+  expect_equal(km, c(2,3,4,2,0,0))
+  # single lag
+  expect_equal(lognorm:::count_NA_forlags(x, 2), 4)
+  # lag larger than n -1
+  expect_error(lognorm:::count_NA_forlags(x, length(x)))
+})
+
 test_that("computeEffectiveNumObs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
@@ -57,27 +75,28 @@ test_that("computeEffectiveNumObs with NA",{
   # tail NA
   res[8:1000] <- NA  # tail NA
   res1 <- res  # store for later comparison
-  nEff <- nEff1 <- computeEffectiveNumObs(res) # here NA argument not needed
+  nEff <- nEff1 <- computeEffectiveNumObs(res, na.rm = TRUE) 
   expect_equal(nEff, computeEffectiveNumObs(res[1:7]))
   res[3] <- NA
   nEff <- computeEffectiveNumObs(res) # without NA argument
   expect_true(is.na(nEff))
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_true(nEff <=  sum(is.finite(res)))
+  # positive bias not accounting for missings
+  nEff3 <- computeEffectiveNumObs(res, na.rm = TRUE, exact.na = FALSE)
+  expect_true(nEff3 > nEff) 
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE, effAcf = effAcfFull)
   expect_true(nEff <=  sum(is.finite(res)))
   expect_true(nEff >=  1)
   res[2:5] <- NA  # many NAs in center
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE, effAcf = effAcfFull)
-  expect_equal(nEff,1)
+  expect_true(1 < nEff && nEff < 2)
 })
 
 test_that("computeEffectiveNumObs with single finite obs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
   res[2:100] <- NA
-  nEff <- computeEffectiveNumObs(res) # NA at edges is ok
-  expect_equal(nEff,1)
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_equal(nEff,1)
 })
@@ -86,10 +105,14 @@ test_that("computeEffectiveNumObs with no finite obs",{
   # generate autocorrelated time series
   res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
   res[] <- NA
-  nEff <- computeEffectiveNumObs(res)
-  expect_equal(nEff,0)
   nEff <- computeEffectiveNumObs(res, na.rm = TRUE)
   expect_equal(nEff,0)
+})
+
+test_that("varCor",{
+  res <- stats::filter(rnorm(100), filter = rep(1,5), circular = TRUE)
+  varx = varCor(res)  
+  expect_true(varx > var(res))
 })
 
 boot_seCor_corrNormal <- function(){
@@ -115,6 +138,7 @@ boot_seCor_corrNormal <- function(){
 
 test_that("seCor uncorrelated series",{
   n <- 10000
+  #n <- 100
   x <- rnorm(n, mean = 10, sd = sqrt(2))
   ans <- seCor(x)
   expected <- sd(x)/sqrt(n)
@@ -143,15 +167,15 @@ test_that("seCor AR1",{
     model = list(ar = c(rho)), n = n, mean = 0, sd = sigmaEps)))
   ans <- mean(ansRep)
   c(ans, seTheory) 
-  #plot(density(ansRep)); abline(v=seTheory)
+  #plot(density(ansRep)); lines(density(ansRep2), col = "blue"); abline(v=seTheory)
   expect_equal(ans, seTheory, tolerance = 0.1, scale = seTheory)
   .tmp.f <- function(){
     # compare to results based on nEff
-    ansRep <- map_dbl(1:8, function(i){
+    ansRep3 <- map_dbl(1:8, function(i){
       x <- arima.sim(model = list(ar = c(rho)), n = n, mean = 0, sd = sigmaEps)
       nEff <- computeEffectiveNumObs(x)
       #seCor(x)
-      sd(x)/sqrt(nEff) # formulas equal
+      sd(x)/sqrt(nEff) # formulas slightly different because of var(x) corrected
     })
   }
 })

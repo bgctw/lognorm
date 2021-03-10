@@ -1,3 +1,9 @@
+# lognorm 0.1.9
+- Improved handling of missing values in computeEffectiveNumObs
+- New function varCor to compute unbiased variance of uncorrelated time series
+- seCor now based on varCor, which reduces bias for small number of effective
+  observations.
+
 # lognorm 0.1.8
 - Implement the Lo 2012 approximation of the distribution of the difference of
   two lognormally distributed random variables by a shifted lognormal 

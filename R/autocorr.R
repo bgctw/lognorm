@@ -2,10 +2,13 @@
 #'
 #' @param x numeric vector
 #' @param na.rm logical. Should missing values be removed?
-#' @param effCov numeric vector of effective covariance components
+#' @param effCor numeric vector of effective correlation components
+#'  first entry at zero lag equals one. See \code{\link{computeEffectiveAutoCorr}}
+#' @param effCov alternative to specifying effCor: numeric vector of 
+#'  effective covariance components
 #'  first entry is the variance. See \code{\link{computeEffectiveAutoCorr}}
-#' @details Computation follows 
-#'  https://stats.stackexchange.com/questions/274635/calculating-error-of-mean-of-time-series.
+#' @param nEff possibility to specify precomputed number of effective 
+#'  observations for speedup.
 #'  
 #' @details The default uses empirical autocorrelation
 #'  estimates from the supplied data up to first negative component.
@@ -15,6 +18,54 @@
 #' @export
 #' @return numeric scalar of standard error of the mean of x
 seCor <- function(
+  x  
+  , effCor = if (missing(effCov)) computeEffectiveAutoCorr(x) else 
+      effCov/var(x, na.rm = TRUE)
+  , na.rm = FALSE 
+  , effCov # compatibility to seCor up to version 0.1.8
+  , nEff = computeEffectiveNumObs(x, effCor, na.rm = na.rm)
+){
+  n <- if (na.rm) length(na.omit(x)) else length(x)
+  if (n < 2) return(NA_real_)
+  if (var(x, na.rm = TRUE) == 0) return(0)
+  varCorVal <- varCor(x, nEff = nEff, na.rm = TRUE)/nEff
+  sqrt(varCorVal)
+}
+
+#' Compute the unbiased variance accounting for empirical autocorrelations
+#'
+#' @param x numeric vector
+#' @param na.rm logical. Should missing values be removed?
+#' @param effCor numeric vector of effective correlation components
+#'  first entry at zero lag equals one. See \code{\link{computeEffectiveAutoCorr}}
+#'  The effective correlation is passed to \code{\link{computeEffectiveNumObs}}.
+#' @param nEff possibility to specify precomputed number of effective 
+#'  observations for speedup.
+#'  
+#' @details The default uses empirical autocorrelation
+#'  estimates from the supplied data up to first negative component.
+#'  For short series of \code{x} it is strongly recommended to to
+#'  provide \code{effCov} that was estimated on a longer time series.
+#'
+#' @export
+#' @return numeric scalar of unbiased variation of x
+varCor <- function(
+  x  
+  , effCor = computeEffectiveAutoCorr(x) 
+  , na.rm = FALSE 
+  , nEff = computeEffectiveNumObs(x, effAcf = effCor)
+){
+  var_uncorr = var(x, na.rm=na.rm) 
+  if (!is.finite(var_uncorr) || (var_uncorr == 0)) return(var_uncorr)
+  n = length(x)
+  if (n <= 1) return(var_uncorr)
+  # BLUE Var(x) for correlated: Zieba11 eq.(1) 
+  nmiss = sum(is.na(x))
+  nfin = n - nmiss
+  var_uncorr*(nfin-1)*nEff/(nfin*(nEff-1))
+}
+
+seCor_depr2103 <- function(
   x  
   , na.rm = FALSE 
   , effCov = computeEffectiveAutoCorr(x, type = "covariance")
@@ -33,9 +84,11 @@ seCor <- function(
   g0 <- g1[1]
   g <- g1[-1]
   k <- 1:kmax
-  varCor <- 1/n*(g0 + 2*sum( (n - k)/n * g))
-  sqrt(varCor)
+  # note that we use autocovariance instead of autocorrelation
+  varCorB <- (g0 + 2*sum( (n - k)/n * g))/n
+  sqrt(varCorB)
 }
+
 
 #' Compute the effective number of observations taking into account autocorrelation
 #' 
@@ -43,8 +96,11 @@ seCor <- function(
 #'  model residuals
 #' @param effAcf autocorrelation coefficients.
 #'  The first entry is fixed at 1 for zero distance.
-#' @param na.rm a logical value indicating whether NA values should be 
-#'  stripped before the computation proceeds.
+#' @param na.rm if not set to TRUE will return NA in there are missings
+#'  in the series
+#' @param exact.na if set to FALSE then do not count and correct for missing
+#'   in the sum of autocorrelation terms. This is faster, but results are
+#'   increasingly biased high with increasing number of missings. 
 #'
 #' @references 
 #' \code{Zieba & Ramza (2011) 
@@ -60,21 +116,66 @@ seCor <- function(
 #' Supplement to the Journal of the Royal Statistical Society, JSTOR,8,184-197}
 #'
 #' @details Assumes records of all times present. 
-#' DO NOT REMOVE NA records before. The length of the time series is used.
-#' @details Handling of NA values: NAs at the beginning or end are 
-#' just trimmed before computation and pose no problem. 
-#' However with NAs aside from edges, the return value of nEff is biased low,
-#' because correlation for pairs involving NA is still accounted in the 
-#' denominator of (3) in Zieba 2011.
-#' This leads to a conservative (biased high) estimates of standard errors.
-#' The effect should be small if length(acf) < n_finite.
-#' @details Because of NA correlation terms, the computed effective number of
-#' observations can be smaller than 1. In this case 1 is returned.
+#' DO NOT REMOVE OR FILTER NA records before. 
+#' The length of the time series is used.
+#' @details Handling of NA values: The formula from Zieba 2011 is extended
+#' to subtract the number of missing pairs in the count of correlation terms.
+#' If `exact.na=false` the original formula is used (after trimming edge-NAs).
 #' 
 #' @export
 #' @return integer scalar: effective number of observations
-#' @exampleFunction example_computeEffectiveNumObs
+#' @examples
+#' # generate autocorrelated time series
+#' res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+#' res[100:120] <- NA
+#' # plot the series of autocorrelated random variables
+#' plot(res)
+#' # plot their empirical autocorrelation function
+#' acf(res, na.action = na.pass)
+#' #effAcf <- computeEffectiveAutoCorr(res)
+#' # the effective number of parameters is less than number of 1000 samples
+#' (nEff <- computeEffectiveNumObs(res, na.rm = TRUE))
 computeEffectiveNumObs <- function(
+  res  
+  , effAcf = computeEffectiveAutoCorr(res)
+  , na.rm = FALSE 
+  , exact.na = TRUE
+){
+  if (!isTRUE(na.rm) & any(is.na(res))) return(NA_integer_)
+  resTr <- .trimNA(res)
+  lacf = length(effAcf) -1 # acf starts with lag 0
+  isFin <- is.finite(resTr)
+  if (lacf < 1) return(sum(isFin))
+  n <- length(resTr)
+  if (n < 2) return(n)
+  k = 1:min(n-1,lacf) 
+  if (exact.na) {
+    # number of missing combinations due to missing in x
+    mka = count_NA_forlags(resTr, 0:length(k))
+    m0 = mka[1]
+    mk = mka[-1]
+    nf = n - m0
+    neff = nf/(1 + 2/nf*sum((n - k -mk) * effAcf[k+1]))  
+  } else {
+    neff = n/(1 + 2/n*sum((n - k) * effAcf[k+1]))  
+  }
+  neff
+}
+
+count_NA_forlags <- function(x, lags=0:(length(x)-1)) {
+  lx = length(x)
+  xb = is.na(x)
+  cntna0 = sum(xb)
+  vapply(lags, function(lag) {
+    if (lag == 0) return(cntna0)
+    if (lag > (lx-1)) stop(
+      "expected lag < length(x)-1=",lx-1," but got lag ",lag)
+    xm = cbind(xb[1:(lx-lag)],xb[-(1:lag)])
+    sum(rowSums(xm) > 0)
+  },0)
+}
+
+computeEffectiveNumObs_depr2103 <- function(
   res  
   , effAcf = computeEffectiveAutoCorr(res)
   , na.rm = FALSE  
@@ -105,18 +206,7 @@ computeEffectiveNumObs <- function(
   if ( nEff > n) stop("encountered nEff larger than finite records.")
   nEff
 }
-example_computeEffectiveNumObs <- function(){
-  # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
-  # plot the series of autocorrelated random variables
-  plot(res)
-  # plot their empirical autocorrelation function
-  acf(res, na.action = na.pass)
-  #effAcf <- computeEffectiveAutoCorr(res)
-  # the effective number of parameters is less than number of 1000 samples
-  (nEff <- computeEffectiveNumObs(res, na.rm = TRUE))
-}
+
 
 #' Estimate vector of effective components of the autocorrelation
 #' 
@@ -132,7 +222,11 @@ example_computeEffectiveNumObs <- function(){
 #'  From the Data}
 #' @export
 #' @return numeric vector: strongest components of the autocorrelation function
-#' @exampleFunction example_computeEffectiveAutoCorr
+#' @examples
+#' # generate autocorrelated time series
+#' res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
+#' res[100:120] <- NA
+#' (effAcf <- computeEffectiveAutoCorr(res))
 computeEffectiveAutoCorr <- function(
   res, type = "correlation" ){
   # first compute empirical autocorrelations
@@ -140,23 +234,15 @@ computeEffectiveAutoCorr <- function(
   # next get the number of elements before crossing the zero line
   nC <- suppressWarnings(min(which(ans$acf <= 0)) - 1)
   if (!is.finite(nC)) {
-    # if there was no below zero correlation within defalt lag.max then
-    # repeat acf with compting all lags
+    # if there was no below zero correlation within default lag.max then
+    # repeat acf with computing all lags
     ans <- acf(res, na.action = na.pass, plot = FALSE, type = type, lag.max = Inf)
-    # append -1 so that nC equals to full lenght if no negative correlation
+    # append -1 so that nC equals to full length if no negative correlation
     nC <- min(which(c(ans$acf,-1) <= 0)) - 1
   }
   nC <- pmax(1,nC) # return at least one component
   ans$acf[1:nC]
 }
-example_computeEffectiveAutoCorr <- function(){
-  # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
-  (effAcf <- computeEffectiveAutoCorr(res))
-}
-
-
 
 
 #' remove NA values at the start and end
@@ -170,38 +256,6 @@ example_computeEffectiveAutoCorr <- function(){
   idx <- cumsum(nisna > 0) & rev(cumsum(rev(nisna))) > 0
   x[idx]
 }
-
-
-#' Estimate the variance of a correlated time series
-#' 
-#' @param res numeric of autocorrelated numbers, usually observation - 
-#'  model residuals
-#' @param nEff effective number of observations, can be specified for efficiency
-#' @param na.rm set to TRUE to remove NA cases before computation
-#' @param ... urther arguments to \code{\link{var}}
-#'
-#' @export
-#' @exampleFunction example_varEffective
-#' @details The BLUE is not anymore the usual variance, but a modified
-#'  variance as given in \code{Zieba 2011}
-#'  @return The estimated variance of the sample
-varEffective <- function(
-  res
-  , nEff = computeEffectiveNumObs(res, na.rm = na.rm) 
-  , na.rm = FALSE  
-  , ...  
-) {
-  var(res, na.rm = na.rm, ...) * nEff/(nEff - 1)
-}
-example_varEffective <- function(){
-  # generate autocorrelated time series
-  res <- stats::filter(rnorm(1000), filter = rep(1,5), circular = TRUE)
-  res[100:120] <- NA
-  # if correlations are neglected, the estimate of the variance is biased low
-  (varNeglectCorr <- var(res, na.rm = TRUE))
-  (varCorr <- varEffective(res, na.rm = TRUE))
-}
-
 
 .tmp.f <- function(){
   dss <- dsfP %>% mutate(
